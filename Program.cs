@@ -1,2 +1,2 @@
-﻿using var game = new survivor_game.Game1();
+﻿using var game = new survivor_game.SurvivorGame();
 game.Run();

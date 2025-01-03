@@ -1,0 +1,2 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"/home/evan/Documents/Code/survivor-game/Content/player.png","/home/evan/Documents/Code/survivor-game/Content/bin/DesktopGL/player.xnb","TextureProcessor","Texture2DContent",267,1109,0.0855489
