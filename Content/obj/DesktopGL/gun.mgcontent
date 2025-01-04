@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>/home/evan/Documents/Code/survivor-game/Content/player.png</SourceFile>
-  <SourceTime>2025-01-03T18:55:56.1231779-07:00</SourceTime>
-  <DestFile>/home/evan/Documents/Code/survivor-game/Content/bin/DesktopGL/Content/player.xnb</DestFile>
-  <DestTime>2025-01-03T18:58:16.8231736-07:00</DestTime>
+  <SourceFile>/home/evan/Documents/Code/survivor-game/Content/gun.png</SourceFile>
+  <SourceTime>2025-01-03T19:16:30.8498066-07:00</SourceTime>
+  <DestFile>/home/evan/Documents/Code/survivor-game/Content/bin/DesktopGL/gun.xnb</DestFile>
+  <DestTime>2025-01-03T19:16:48.7998061-07:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2024-08-16T11:05:56-06:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
