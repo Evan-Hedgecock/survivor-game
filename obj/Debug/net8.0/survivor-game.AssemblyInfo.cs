@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("survivor-game")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+85ec7648b08fa1c8998397ffe41e869ba42624d7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1a48bcc602e4bd51c8746baebd910fd245278669")]
 [assembly: System.Reflection.AssemblyProductAttribute("survivor-game")]
 [assembly: System.Reflection.AssemblyTitleAttribute("survivor-game")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

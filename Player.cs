@@ -15,14 +15,18 @@ namespace Character
 		private Vector2 facingDirection = new Vector2(1, 0);
 
 		// Movement values
-		private int dashSpeed = 100;
+		private int dashSpeed = 10;
 		private int speed = 5;
 
-		// Can use ability bools
+		// Ability bools
 		private bool canDash = true;
+		private bool dashing = false;
+
+		// Durations
+		private float dashDuration = 0.1F;
 
 		// Cooldowns
-		private float dashCooldown = 1;
+		private float dashCooldown = 0.75F;
 
 		public void Update(Vector2 inputAxis)
 		{
@@ -38,10 +42,6 @@ namespace Character
 			spriteBatch.Draw(texture, position, null, Color.White, 0f, new Vector2(0, 0), 0.15f, SpriteEffects.None, 0f);
 		}
 
-		public Vector2 getPosition()
-		{
-			return position;
-		}
 
 		private void processMovement(Vector2 inputAxis)
 		{
@@ -51,8 +51,14 @@ namespace Character
 
         public void dash(Vector2 direction)
 		{
-			if (canDash)
+			if (canDash || dashing)
 			{
+				// During first dash set dashing to true
+				Console.WriteLine(dashing);
+				Console.WriteLine(canDash);
+				Console.WriteLine();
+				if (canDash)
+					dashing = true;
 				canDash = false;
 				if (direction.X == 0  && direction.Y == 0)
 				{
@@ -64,22 +70,42 @@ namespace Character
 			}
 		}
 		// Timer Functions
-		public Timer dashTimer()
+		public Timer dashCooldownTimer()
 		{
 			Action cb = dashReady;
 			Timer timer = new Timer(dashCooldown, cb);
 			return timer;
 		}
 
+		public Timer dashDurationTimer()
+		{
+			Action cb = dashComplete;
+			Timer timer = new Timer(dashDuration, cb);
+			return timer;
+		}
+
+		// Set ability bool functions
 		private void dashReady()
 		{
+			Console.WriteLine("Dash ready");
 			canDash = true;
+		}
+		
+		private void dashComplete()
+		{
+			Console.WriteLine("Dash Complete");
+			dashing = false;
 		}
 
 		// Getters
 		public bool getDash()
 		{
-			return canDash;
+			return (canDash || dashing);
+		}
+
+		public Vector2 getPosition()
+		{
+			return position;
 		}
 
 		// Setters

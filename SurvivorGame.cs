@@ -13,7 +13,6 @@ public class SurvivorGame : Game
 
     private SpriteBatch _spriteBatch;
 
-	private TimerManager _timerManager;
 
     private Vector2 inputAxis;
 
@@ -21,7 +20,9 @@ public class SurvivorGame : Game
     private Texture2D playerTexture;
 
 	// Timers
-	private Timer dashTimer;
+	private TimerManager _timerManager;
+	private Timer dashCooldownTimer;
+	private Timer dashDurationTimer;
 
     public SurvivorGame()
     {
@@ -38,9 +39,11 @@ public class SurvivorGame : Game
         _graphics.ApplyChanges();
 
         player = new Player();
-		// Create a timerManager object that stores Timers and updates any active timers with Update()
-		dashTimer = player.dashTimer();
-		Timer[] timers = {dashTimer};
+
+		// Create timers and store in timerManager
+		dashCooldownTimer = player.dashCooldownTimer();
+		dashDurationTimer = player.dashDurationTimer();
+		Timer[] timers = {dashCooldownTimer, dashDurationTimer};
 		_timerManager = new TimerManager(timers);
 
         inputAxis = new Vector2(0, 0);
@@ -94,7 +97,8 @@ public class SurvivorGame : Game
 			if (player.getDash())
 			{
 				player.dash(inputAxis);
-				dashTimer.start();
+				dashCooldownTimer.start();
+				dashDurationTimer.start();
 			}
 		}
 

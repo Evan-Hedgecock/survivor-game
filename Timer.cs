@@ -18,37 +18,35 @@ namespace Time
 		public void Update(GameTime gameTime)
 		{
 			// Update every timer that is active
-			foreach (Timer t in _timers)
+			foreach (Timer timer in _timers)
 			{
-				if (t.isActive())
-					t.countDown(gameTime);
+				if (timer.isActive())
+					timer.countDown(gameTime);
 			}
 		}
 	}
 
 	public class Timer
 	{
-		// Timers should initialize with a countdown time and a callback function
 		private double _time;
-		private double _setTime;
+		private double _duration;
 		private bool _isActive;
-		private Action _alarm;
+		private Action _timeout;
 
 		public Timer(double time, Action cb)
 		{
-			_alarm = cb;
-			_setTime = time;
+			_timeout = cb;
+			_duration = time;
 			_time = time;
 		}
 
 		public void countDown(GameTime gameTime)
 		{
-			// Timers countdown time should decrement during update
-			// If time is finished, return true so TimerManager will remove it, and call callback function
+			// When time runs out, invoke timeout function, reset time, and deactivate timer
 			if (_time <= 0)
 			{
-				_alarm();
-				_time = _setTime;
+				_timeout();
+				_time = _duration;
 				_isActive = false;
 			}
 			_time -= gameTime.ElapsedGameTime.TotalSeconds;
