@@ -20,8 +20,8 @@ namespace Time
 			// Update every timer that is active
 			foreach (Timer timer in _timers)
 			{
-				if (timer.isActive())
-					timer.countDown(gameTime);
+				if (timer.IsActive())
+					timer.CountDown(gameTime);
 			}
 		}
 	}
@@ -40,7 +40,7 @@ namespace Time
 			_time = time;
 		}
 
-		public void countDown(GameTime gameTime)
+		public void CountDown(GameTime gameTime)
 		{
 			// When time runs out, invoke timeout function, reset time, and deactivate timer
 			if (_time <= 0)
@@ -52,12 +52,12 @@ namespace Time
 			_time -= gameTime.ElapsedGameTime.TotalSeconds;
 		}
 
-		public void start()
+		public void Start()
 		{
 			_isActive = true;
 		}
 
-		public bool isActive()
+		public bool IsActive()
 		{
 			return _isActive;
 		}

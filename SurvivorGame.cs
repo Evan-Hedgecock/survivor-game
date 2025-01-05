@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Obstacle;
 using System;
 using Time;
 using Weapon;
@@ -24,6 +25,12 @@ public class SurvivorGame : Game
 	// Weapon properties
 	private Gun gun;
 	private Texture2D gunTexture;
+
+	// Obstacles
+	private Wall house;
+	private Wall wall;
+	private Texture2D wallTexture;
+	private Texture2D houseTexture;
 
 	// Timers
 	private TimerManager _timerManager;
@@ -48,9 +55,10 @@ public class SurvivorGame : Game
 
 		gun = new Gun();
 
+
 		// Create timers and store in timerManager
-		dashCooldownTimer = player.dashCooldownTimer();
-		dashDurationTimer = player.dashDurationTimer();
+		dashCooldownTimer = player.DashCooldownTimer();
+		dashDurationTimer = player.DashDurationTimer();
 		Timer[] timers = {dashCooldownTimer, dashDurationTimer};
 		_timerManager = new TimerManager(timers);
 
@@ -62,11 +70,21 @@ public class SurvivorGame : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        playerTexture = Content.Load<Texture2D>("rectangle");
-		player.setTexture(playerTexture);
+        playerTexture = Content.Load<Texture2D>("player");
+		player.SetTexture(playerTexture);
 
 		gunTexture = Content.Load<Texture2D>("gun");
 		gun.setTexture(gunTexture);
+
+		houseTexture = Content.Load<Texture2D>("house");
+		wallTexture = Content.Load<Texture2D>("rectangle");
+
+		house = new Wall(new Rectangle(400, 200, houseTexture.Width, houseTexture.Height));
+		wall = new Wall(new Rectangle(100, 400, wallTexture.Width, wallTexture.Height));
+
+		wall.SetTexture(wallTexture);
+		house.SetTexture(houseTexture);
+
     }
 
     protected override void Update(GameTime gameTime)
@@ -105,16 +123,20 @@ public class SurvivorGame : Game
 			// On dash, call the player method that instantiates timer and assign to variable
 			// Pass that variable to the timerManager object
 
-			if (player.getDash())
+			if (player.GetDash())
 			{
-				player.dash(inputAxis);
-				dashCooldownTimer.start();
-				dashDurationTimer.start();
+				player.Dash(inputAxis);
+				house.Update(player);
+				wall.Update(player);
+				dashCooldownTimer.Start();
+				dashDurationTimer.Start();
 			}
 		}
 
         player.Update(inputAxis);
-		gun.Update(player.getPosition());
+		gun.Update(player.GetPosition());
+		house.Update(player);
+		wall.Update(player);
 
         base.Update(gameTime);
     }
@@ -124,8 +146,10 @@ public class SurvivorGame : Game
         //displayFrames(gameTime);
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin();
-        player.Draw(_spriteBatch);
 		gun.Draw(_spriteBatch);
+		house.Draw(_spriteBatch);
+		wall.Draw(_spriteBatch);
+        player.Draw(_spriteBatch);
         _spriteBatch.End();
 
         base.Draw(gameTime);

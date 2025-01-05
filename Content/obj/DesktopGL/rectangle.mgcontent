@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SourceFile>/home/evan/Documents/Code/survivor-game/Content/rectangle.png</SourceFile>
-  <SourceTime>2025-01-04T16:33:36.5960815-07:00</SourceTime>
+  <SourceTime>2025-01-05T14:34:03.9289467-07:00</SourceTime>
   <DestFile>/home/evan/Documents/Code/survivor-game/Content/bin/DesktopGL/rectangle.xnb</DestFile>
-  <DestTime>2025-01-04T16:35:13.286471-07:00</DestTime>
+  <DestTime>2025-01-05T14:34:34.7090695-07:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2024-08-16T11:05:56-06:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

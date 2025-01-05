@@ -13,9 +13,11 @@ namespace Character
 		// Positional values
         private Vector2 position = new Vector2(200, 200);
 		private Vector2 facingDirection = new Vector2(1, 0);
+		private Vector2 previousPosition = new Vector2(200, 200);
+		private Rectangle collisionBox;
 
 		// Movement values
-		private int dashSpeed = 10;
+		private int dashSpeed = 15;
 		private int speed = 5;
 
 		// Ability bools
@@ -30,7 +32,7 @@ namespace Character
 
 		public void Update(Vector2 inputAxis)
 		{
-			processMovement(inputAxis);
+			ProcessMovement(inputAxis);
 
 			// Change player direction on direction input
 			if (inputAxis.X != 0 || inputAxis.Y != 0)
@@ -43,13 +45,19 @@ namespace Character
 		}
 
 
-		private void processMovement(Vector2 inputAxis)
+		private void ProcessMovement(Vector2 inputAxis)
 		{
-			position.X += (inputAxis.X * speed);
-			position.Y += (inputAxis.Y * speed);
+			previousPosition = position;
+			if (dashing)
+				Dash(facingDirection);
+			else
+			{
+				position.X += (inputAxis.X * speed);
+				position.Y += (inputAxis.Y * speed);
+			}
 		}
 
-        public void dash(Vector2 direction)
+        public void Dash(Vector2 direction)
 		{
 			if (canDash || dashing)
 			{
@@ -61,52 +69,71 @@ namespace Character
 				{
 					direction = facingDirection;
 				}
-
-				position.X += (direction.X * dashSpeed);
-				position.Y += (direction.Y * dashSpeed);
+				float dSpeed = (direction.X != 0 && direction.Y != 0) ? (float) (dashSpeed / 1.5) : dashSpeed;
+				position.X += (direction.X * dSpeed);
+				position.Y += (direction.Y * dSpeed);
 			}
 		}
-		// Timer Functions
-		public Timer dashCooldownTimer()
+
+		// Collision Functions
+		public void Collide()
 		{
-			Action cb = dashReady;
+			Console.WriteLine(position);
+			position = previousPosition;
+		}
+
+		// Timer Functions
+		public Timer DashCooldownTimer()
+		{
+			Action cb = DashReady;
 			Timer timer = new Timer(dashCooldown, cb);
 			return timer;
 		}
 
-		public Timer dashDurationTimer()
+		public Timer DashDurationTimer()
 		{
-			Action cb = dashComplete;
+			Action cb = DashComplete;
 			Timer timer = new Timer(dashDuration, cb);
 			return timer;
 		}
 
 		// Set ability bool functions
-		private void dashReady()
+		private void DashReady()
 		{
 			canDash = true;
 		}
 		
-		private void dashComplete()
+		private void DashComplete()
 		{
 			dashing = false;
 		}
 
 		// Getters
-		public bool getDash()
+		public bool GetDash()
 		{
 			return (canDash || dashing);
 		}
 
-		public Vector2 getPosition()
+		public Vector2 GetPosition()
 		{
 			return position;
 		}
 
+		public Rectangle GetCollider()
+		{
+			collisionBox.X = (int) position.X;
+			collisionBox.Y = (int) position.Y;
+			return collisionBox;
+		}
+
 		// Setters
-		public void setTexture(Texture2D texture)
+		public void SetTexture(Texture2D texture)
 		{
 			this.texture = texture;
+			collisionBox = new Rectangle((int) this.position.X,
+										 (int) this.position.Y,
+										 (int) (this.texture.Width * 0.15f),
+										 (int) (this.texture.Height * 0.15f));
 		}
 	}
 }

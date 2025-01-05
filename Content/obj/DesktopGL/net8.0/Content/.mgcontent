@@ -5,9 +5,13 @@
   <Config />
   <SourceFiles>
     <File>/home/evan/Documents/Code/survivor-game/Content/gun.png</File>
+    <File>/home/evan/Documents/Code/survivor-game/Content/house.png</File>
+    <File>/home/evan/Documents/Code/survivor-game/Content/player.png</File>
     <File>/home/evan/Documents/Code/survivor-game/Content/rectangle.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
   </DestFiles>
