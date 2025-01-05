@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using Time;
+using Weapon;
 
 namespace survivor_game;
 
@@ -13,11 +14,16 @@ public class SurvivorGame : Game
 
     private SpriteBatch _spriteBatch;
 
-
+	// Input properties
     private Vector2 inputAxis;
 
+	// Player properties
     private Player player;
     private Texture2D playerTexture;
+
+	// Weapon properties
+	private Gun gun;
+	private Texture2D gunTexture;
 
 	// Timers
 	private TimerManager _timerManager;
@@ -40,6 +46,8 @@ public class SurvivorGame : Game
 
         player = new Player();
 
+		gun = new Gun();
+
 		// Create timers and store in timerManager
 		dashCooldownTimer = player.dashCooldownTimer();
 		dashDurationTimer = player.dashDurationTimer();
@@ -56,6 +64,9 @@ public class SurvivorGame : Game
 
         playerTexture = Content.Load<Texture2D>("rectangle");
 		player.setTexture(playerTexture);
+
+		gunTexture = Content.Load<Texture2D>("gun");
+		gun.setTexture(gunTexture);
     }
 
     protected override void Update(GameTime gameTime)
@@ -103,6 +114,7 @@ public class SurvivorGame : Game
 		}
 
         player.Update(inputAxis);
+		gun.Update(player.getPosition());
 
         base.Update(gameTime);
     }
@@ -113,6 +125,7 @@ public class SurvivorGame : Game
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin();
         player.Draw(_spriteBatch);
+		gun.Draw(_spriteBatch);
         _spriteBatch.End();
 
         base.Draw(gameTime);

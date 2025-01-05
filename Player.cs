@@ -54,9 +54,6 @@ namespace Character
 			if (canDash || dashing)
 			{
 				// During first dash set dashing to true
-				Console.WriteLine(dashing);
-				Console.WriteLine(canDash);
-				Console.WriteLine();
 				if (canDash)
 					dashing = true;
 				canDash = false;
@@ -87,13 +84,11 @@ namespace Character
 		// Set ability bool functions
 		private void dashReady()
 		{
-			Console.WriteLine("Dash ready");
 			canDash = true;
 		}
 		
 		private void dashComplete()
 		{
-			Console.WriteLine("Dash Complete");
 			dashing = false;
 		}
 

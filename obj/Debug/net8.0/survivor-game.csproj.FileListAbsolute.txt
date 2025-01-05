@@ -25,3 +25,4 @@
 /home/evan/Documents/Code/survivor-game/obj/Debug/net8.0/survivor-game.genruntimeconfig.cache
 /home/evan/Documents/Code/survivor-game/obj/Debug/net8.0/ref/survivor-game.dll
 /home/evan/Documents/Code/survivor-game/bin/Debug/net8.0/Content/rectangle.xnb
+/home/evan/Documents/Code/survivor-game/bin/Debug/net8.0/Content/gun.xnb

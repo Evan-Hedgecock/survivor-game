@@ -11,21 +11,21 @@ namespace Weapon
 		private Vector2 Position;
 		private Player User;
 		
-		public Gun(Texture2D texture, Player player)
-		{
-			Texture = texture;
-			User = player;
-		}
-
 		public void Update(Vector2 position)
 		{
-			Position.X = position.X + 70;
-			Position.Y = position.Y + 40;
+			Position.X = position.X + 20;
+			Position.Y = position.Y + 20;
 		}
 
 		public void Draw(SpriteBatch spriteBatch)
 		{
-			spriteBatch.Draw(Texture, Position, Color.White);
+			spriteBatch.Draw(Texture, Position, null, Color.White, 0f, new Vector2(0, 0), 0.5f, SpriteEffects.None, 0f);
+		}
+
+		// Setters
+		public void setTexture(Texture2D texture)
+		{
+			this.Texture = texture;
 		}
 	}
 }
