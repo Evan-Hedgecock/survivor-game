@@ -18,20 +18,21 @@ public class SurvivorGame : Game
     private Player player;
     private Texture2D playerTexture;
 
-	private Gun gun;
-	private Texture2D gunTexture;
-
     public SurvivorGame()
     {
         _graphics = new GraphicsDeviceManager(this);
-		_graphics.PreferredBackBufferWidth = 2560;
-		_graphics.PreferredBackBufferHeight = 1600;
+        Console.WriteLine(GraphicsDevice);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
 
     protected override void Initialize()
     {
+        _graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width / 2;
+		_graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height / 2;
+        _graphics.IsFullScreen = false;
+        _graphics.ApplyChanges();
+
         inputAxis = new Vector2(0, 0);
         base.Initialize();
     }
@@ -40,11 +41,8 @@ public class SurvivorGame : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        playerTexture = Content.Load<Texture2D>("player");
-        player = new Player(playerTexture, new Vector2(200, 200), 10);
-
-		gunTexture = Content.Load<Texture2D>("gun");
-		gun = new Gun(gunTexture, player);
+        playerTexture = Content.Load<Texture2D>("rectangle");
+        player = new Player(playerTexture);
     }
 
     protected override void Update(GameTime gameTime)
@@ -75,22 +73,31 @@ public class SurvivorGame : Game
             inputAxis.X = 0;
         }
 
-        player.Update(inputAxis);
+        if (Keyboard.GetState().IsKeyDown(Keys.Space))
+        {
+			player.dash(inputAxis);
+		}
 
-		gun.Update(player.getPosition());
+        player.Update(inputAxis);
 
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
     {
+        //displayFrames(gameTime);
         GraphicsDevice.Clear(Color.CornflowerBlue);
-
         _spriteBatch.Begin();
         player.Draw(_spriteBatch);
-		gun.Draw(_spriteBatch);
         _spriteBatch.End();
 
         base.Draw(gameTime);
+    }
+
+    private void displayFrames(GameTime gameTime)
+    {
+        float frameRate = 1 / (float)gameTime.ElapsedGameTime.TotalSeconds;
+        Console.Write("Frames: ");
+        Console.WriteLine(frameRate);
     }
 }
