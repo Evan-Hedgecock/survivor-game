@@ -2,30 +2,33 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using Time;
 
 namespace Character
 {
     public class Player
     {
         private Texture2D texture { get; set; }
-        private Vector2 position;
-		private Vector2 facingDirection;
 
-		private int dashSpeed;
-        private int speed;
+		// Positional values
+        private Vector2 position = new Vector2(200, 200);
+		private Vector2 facingDirection = new Vector2(1, 0);
 
-        public Player(Texture2D texture)
-        {
-            this.texture = texture;
-            position = new Vector2(200, 200);
-            speed = 5;
-			dashSpeed = 10;
-        }
+		// Movement values
+		private int dashSpeed = 100;
+		private int speed = 5;
+
+		// Can use ability bools
+		private bool canDash = true;
+
+		// Cooldowns
+		private float dashCooldown = 1;
 
 		public void Update(Vector2 inputAxis)
 		{
-			position.X += (inputAxis.X * speed);
-			position.Y += (inputAxis.Y * speed);
+			processMovement(inputAxis);
+
+			// Change player direction on direction input
 			if (inputAxis.X != 0 || inputAxis.Y != 0)
 				facingDirection = inputAxis;
 		}
@@ -40,16 +43,49 @@ namespace Character
 			return position;
 		}
 
+		private void processMovement(Vector2 inputAxis)
+		{
+			position.X += (inputAxis.X * speed);
+			position.Y += (inputAxis.Y * speed);
+		}
+
         public void dash(Vector2 direction)
 		{
-			if (direction.X == 0  && direction.Y == 0)
+			if (canDash)
 			{
-				direction = facingDirection;
-			}
+				canDash = false;
+				if (direction.X == 0  && direction.Y == 0)
+				{
+					direction = facingDirection;
+				}
 
-			position.X += (direction.X * dashSpeed);
-			position.Y += (direction.Y * dashSpeed);
+				position.X += (direction.X * dashSpeed);
+				position.Y += (direction.Y * dashSpeed);
+			}
 		}
-				
+		// Timer Functions
+		public Timer dashTimer()
+		{
+			Action cb = dashReady;
+			Timer timer = new Timer(dashCooldown, cb);
+			return timer;
+		}
+
+		private void dashReady()
+		{
+			canDash = true;
+		}
+
+		// Getters
+		public bool getDash()
+		{
+			return canDash;
+		}
+
+		// Setters
+		public void setTexture(Texture2D texture)
+		{
+			this.texture = texture;
+		}
 	}
 }

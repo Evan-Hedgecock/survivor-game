@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using Weapon;
+using Time;
 
 namespace survivor_game;
 
@@ -13,15 +13,19 @@ public class SurvivorGame : Game
 
     private SpriteBatch _spriteBatch;
 
+	private TimerManager _timerManager;
+
     private Vector2 inputAxis;
 
     private Player player;
     private Texture2D playerTexture;
 
+	// Timers
+	private Timer dashTimer;
+
     public SurvivorGame()
     {
         _graphics = new GraphicsDeviceManager(this);
-        Console.WriteLine(GraphicsDevice);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
@@ -33,6 +37,12 @@ public class SurvivorGame : Game
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
+        player = new Player();
+		// Create a timerManager object that stores Timers and updates any active timers with Update()
+		dashTimer = player.dashTimer();
+		Timer[] timers = {dashTimer};
+		_timerManager = new TimerManager(timers);
+
         inputAxis = new Vector2(0, 0);
         base.Initialize();
     }
@@ -42,13 +52,16 @@ public class SurvivorGame : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
         playerTexture = Content.Load<Texture2D>("rectangle");
-        player = new Player(playerTexture);
+		player.setTexture(playerTexture);
     }
 
     protected override void Update(GameTime gameTime)
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
+
+		// Update timerManager timers
+		_timerManager.Update(gameTime);
 
         bool up = (Keyboard.GetState().IsKeyDown(Keys.W)) ? true : false;
         bool down = (Keyboard.GetState().IsKeyDown(Keys.S)) ? true : false;
@@ -75,7 +88,14 @@ public class SurvivorGame : Game
 
         if (Keyboard.GetState().IsKeyDown(Keys.Space))
         {
-			player.dash(inputAxis);
+			// On dash, call the player method that instantiates timer and assign to variable
+			// Pass that variable to the timerManager object
+
+			if (player.getDash())
+			{
+				player.dash(inputAxis);
+				dashTimer.start();
+			}
 		}
 
         player.Update(inputAxis);
