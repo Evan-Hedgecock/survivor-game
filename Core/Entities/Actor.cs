@@ -3,7 +3,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Core.Entities;
 public abstract class Actor {
-	public virtual Texture2D Texture { get; set; }
+	public virtual Texture2D Texture { 
+		get { return _texture; }
+		set { _texture = value; }
+	}
+	protected Texture2D _texture;
+	protected float _scale;
 
 	// Positional Values
 	public virtual Vector2 Position {
@@ -17,17 +22,20 @@ public abstract class Actor {
 
 	// Collision Values
 	public virtual Rectangle CollisionBox {
-		get { return _collisionBox; }
+		get { 
+			UpdateCollider();
+			return _collisionBox; }
 		set { _collisionBox = value; }
 	}
-//
 	protected Rectangle _collisionBox;
 	protected float _collisionBoxOffset;
 	protected int _collisionBoxHeight;
-	protected float _scale;
 	
 	// Movement Values
-	public virtual int Speed { get; set; }
+	public virtual int Speed { 
+		get { return _speed; }
+	   	set { _speed = value; }
+	}
 	protected int _speed;
 
 	public abstract void Draw(SpriteBatch spriteBatch);
@@ -45,6 +53,24 @@ public abstract class Actor {
 				 collided.Bottom <= _position.Y + (float) (Texture.Height * _scale) - _collisionBoxHeight) {
 			_position.X = _collisionBox.X;
 		}
+	}
+
+	public virtual void CreateTexture(Texture2D texture) {
+		Texture = texture;
+		CreateCollisionBox();
+	}
+
+	protected virtual void CreateCollisionBox() {
+		_collisionBoxOffset = ((_texture.Height * _scale) - _collisionBoxHeight);
+		_collisionBox = new Rectangle((int) _position.X,
+									  (int) (_position.Y + _collisionBoxOffset),
+									  (int) (_texture.Width * _scale),
+									  _collisionBoxHeight);
+	}
+
+	protected virtual void UpdateCollider() {
+		_collisionBox.X = (int) _position.X;
+		_collisionBox.Y = (int) (_position.Y + _collisionBoxOffset);
 	}
 
 	protected abstract void ProcessMovement(Vector2 direction);

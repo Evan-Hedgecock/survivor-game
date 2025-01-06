@@ -6,13 +6,6 @@ using Time;
 
 namespace Core.Entities;
 public class Player : Actor {
-	public override Rectangle CollisionBox {
-		get {
-			UpdateCollider();
-			return _collisionBox;
-		}
-		set { _collisionBox = value; }
-	}
 	// Movement values
 	private int _dashSpeed = 15;
 
@@ -95,17 +88,6 @@ public class Player : Actor {
 		return _position;
 	}
 
-	// Setters
-	public void CreateTexture(Texture2D texture) {
-		Texture = texture;
-		_collisionBoxOffset = (Texture.Height * _scale) - _collisionBoxHeight;
-		_collisionBox = new Rectangle((int) _position.X,
-									  (int) (_position.Y + _collisionBoxOffset),
-									  (int) (Texture.Width * _scale),
-									  _collisionBoxHeight);
-
-	}
-
 	protected override void ProcessMovement(Vector2 direction) {
 		_previousPosition = _position;
 		if (_dashing) {
@@ -115,11 +97,6 @@ public class Player : Actor {
 			_position.X += (direction.X * _speed);
 			_position.Y += (direction.Y * _speed);
 		}
-	}
-
-	private void UpdateCollider() {
-		_collisionBox.X = (int) _position.X;
-		_collisionBox.Y = (int) (_position.Y + _collisionBoxOffset);
 	}
 
 	// Set ability bool functions

@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Core.Entities;
-using Enemy;
 using Obstacle;
 using Time;
 
@@ -26,7 +25,7 @@ public class SurvivorGame : Game {
     private Player _player = new Player();
 
 	// Enemy properties
-	private Monster _enemy = new Monster();
+	private Enemy _enemy = new Enemy();
 
 	// Obstacles
 	private Wall _house = new Wall(new Vector2(400, 200));
@@ -74,7 +73,7 @@ public class SurvivorGame : Game {
 
 		// Set Textures
 		_player.CreateTexture(_playerTexture);
-		_enemy.SetTexture(_enemyTexture);
+		_enemy.CreateTexture(_enemyTexture);
 		_wall.SetTexture(_wallTexture);
 		_house.SetTexture(_houseTexture);
     }
