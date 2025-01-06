@@ -24,7 +24,7 @@ public class Monster {
 	public void Update(Player player) {
 		_collisionBox.X = (int) _position.X;
 		_collisionBox.Y = (int) (_position.Y + _collisionBoxSize);
-		Vector2 playerCenter = player.GetCollider().Center.ToVector2();
+		Vector2 playerCenter = player.CollisionBox.Center.ToVector2();
 		Vector2 centerPosition = _collisionBox.Center.ToVector2();
 		_moveToward = Vector2.Subtract(playerCenter, centerPosition);
 		ProcessMovement();

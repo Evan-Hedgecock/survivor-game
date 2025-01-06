@@ -6,8 +6,9 @@ public abstract class StaticCollider {
 	protected Rectangle _collisionShape;
 
 	public void Update(Player player) {
-		while (CheckCollision(player.GetCollider()))
+		while (CheckCollision(player.CollisionBox)) {
 			player.Collide(_collisionShape);
+		}
 	}
 
 	public bool CheckCollision(Rectangle collider) {

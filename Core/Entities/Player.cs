@@ -1,26 +1,20 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Core.Entities;
 using Time;
 
 namespace Core.Entities;
-public class Player {
-	private Texture2D _texture { get; set; }
-
-	// Positional values
-	private Vector2 _position = new Vector2(200, 200);
-	private Vector2 _facingDirection = new Vector2(1, 0);
-	private Vector2 _previousPosition = new Vector2(200, 200);
-
-	// Collision values
-	private Rectangle _collisionBox;
-	private float _collisionBoxSize;
-	private const int _collisionBoxHeight = 10;
-	private const float _playerScale = 0.15f;
-
+public class Player : Actor {
+	public override Rectangle CollisionBox {
+		get {
+			UpdateCollider();
+			return _collisionBox;
+		}
+		set { _collisionBox = value; }
+	}
 	// Movement values
 	private int _dashSpeed = 15;
-	private int _speed = 5;
 
 	// Ability bools
 	private bool _canDash = true;
@@ -32,8 +26,24 @@ public class Player {
 	// Cooldowns
 	private float _dashCooldown = 0.75f;
 
+	public Player() {
+		// Positional values
+		Position = new Vector2(200, 200);
+		_facingDirection = new Vector2(1, 0);
+		_previousPosition = new Vector2(200, 200);
+
+		// Movement values
+		_speed = 5;
+
+		// Collision values
+		_collisionBoxHeight = 10;
+		_scale = 0.15f;
+	}
+
 	public void Update(Vector2 inputAxis) {
 		ProcessMovement(inputAxis);
+		_collisionBox.X = (int) _position.X;
+		_collisionBox.Y = (int) (_position.Y + _collisionBoxOffset);
 
 		// Change player direction on direction input
 		if (inputAxis.X != 0 || inputAxis.Y != 0) {
@@ -41,9 +51,9 @@ public class Player {
 		}
 	}
 
-	public void Draw(SpriteBatch spriteBatch) {
-		spriteBatch.Draw(_texture, _position, null, Color.White, 0f,
-					  	 new Vector2(0, 0), _playerScale, SpriteEffects.None, 0f);
+	public override void Draw(SpriteBatch spriteBatch) {
+		spriteBatch.Draw(Texture, _position, null, Color.White, 0f,
+					  	 new Vector2(0, 0), _scale, SpriteEffects.None, 0f);
 	}
 
 	public void Dash(Vector2 direction) {
@@ -60,29 +70,6 @@ public class Player {
 						   (float) (_dashSpeed / 1.5) : _dashSpeed;
 			_position.X += (direction.X * dSpeed);
 			_position.Y += (direction.Y * dSpeed);
-		}
-	}
-
-	// Collision Functions
-	public void Collide(Rectangle collider) {
-		_position = _previousPosition;
-		// If wall is to the left or right of player, allow vertical movement
-		if (collider.Left >= _position.X + (_texture.Width * _playerScale) ||
-			collider.Right <= _position.X) {
-			_position.Y = _collisionBox.Y - (float) (_texture.Height * _playerScale) + _collisionBoxHeight;
-		}
-		// If wall is above or below player, allow horizontal movement
-		else if (collider.Top >= (int) (_position.Y + (_texture.Height * _playerScale)) ||
-				 collider.Bottom <= _position.Y + (float) (_texture.Height * _playerScale) - _collisionBoxHeight) {
-			_position.X = _collisionBox.X;
-		}
-		else  {
-			Console.Write("Collider.Top: ");
-			Console.Write(collider.Top);
-			Console.WriteLine();
-			Console.Write("position.Y + height: ");
-			Console.Write((int) (_position.Y + (_texture.Height * _playerScale)));
-			Console.WriteLine();
 		}
 	}
 
@@ -108,35 +95,31 @@ public class Player {
 		return _position;
 	}
 
-	public Rectangle GetCollider() {
-		_collisionBox.X = (int) _position.X;
-		_collisionBox.Y = (int) (_position.Y + _collisionBoxSize);
-		return _collisionBox;
-	}
-
 	// Setters
-	public void SetTexture(Texture2D texture) {
-		_texture = texture;
-		SetCollisionBox();
+	public void CreateTexture(Texture2D texture) {
+		Texture = texture;
+		_collisionBoxOffset = (Texture.Height * _scale) - _collisionBoxHeight;
+		_collisionBox = new Rectangle((int) _position.X,
+									  (int) (_position.Y + _collisionBoxOffset),
+									  (int) (Texture.Width * _scale),
+									  _collisionBoxHeight);
+
 	}
 
-	private void SetCollisionBox() {
-		_collisionBoxSize = ((_texture.Height * _playerScale) - _collisionBoxHeight);
-		_collisionBox = new Rectangle((int) _position.X,
-									  (int) (_position.Y + _collisionBoxSize),
-									  (int) (_texture.Width * _playerScale),
-									  _collisionBoxHeight);
-  	}
-
-	private void ProcessMovement(Vector2 inputAxis) {
+	protected override void ProcessMovement(Vector2 direction) {
 		_previousPosition = _position;
 		if (_dashing) {
 			Dash(_facingDirection);
 		}
 		else {
-			_position.X += (inputAxis.X * _speed);
-			_position.Y += (inputAxis.Y * _speed);
+			_position.X += (direction.X * _speed);
+			_position.Y += (direction.Y * _speed);
 		}
+	}
+
+	private void UpdateCollider() {
+		_collisionBox.X = (int) _position.X;
+		_collisionBox.Y = (int) (_position.Y + _collisionBoxOffset);
 	}
 
 	// Set ability bool functions

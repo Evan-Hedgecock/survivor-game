@@ -73,7 +73,7 @@ public class SurvivorGame : Game {
 		_enemyTexture = Content.Load<Texture2D>("player");
 
 		// Set Textures
-		_player.SetTexture(_playerTexture);
+		_player.CreateTexture(_playerTexture);
 		_enemy.SetTexture(_enemyTexture);
 		_wall.SetTexture(_wallTexture);
 		_house.SetTexture(_houseTexture);
