@@ -1,5 +1,5 @@
 using Microsoft.Xna.Framework;
-using Character;
+using Core.Entities;
 
 namespace Collider;
 public abstract class StaticCollider {

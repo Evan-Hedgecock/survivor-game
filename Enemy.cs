@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Character;
+using Core.Entities;
 
 namespace Enemy;
 public class Monster {

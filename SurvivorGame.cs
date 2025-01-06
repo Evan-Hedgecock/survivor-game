@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Character;
+using Core.Entities;
 using Enemy;
 using Obstacle;
 using Time;

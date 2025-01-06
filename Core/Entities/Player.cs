@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Time;
 
-namespace Character;
+namespace Core.Entities;
 public class Player {
 	private Texture2D _texture { get; set; }
 
