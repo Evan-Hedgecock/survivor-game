@@ -1,164 +1,152 @@
-﻿using Character;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Character;
 using Obstacle;
-using System;
 using Time;
-using Weapon;
 
 namespace survivor_game;
 
-public class SurvivorGame : Game
-{
+public class SurvivorGame : Game {
     private GraphicsDeviceManager _graphics;
 
     private SpriteBatch _spriteBatch;
 
 	// Input properties
-    private Vector2 inputAxis;
+    private Vector2 _inputAxis;
 
 	// Player properties
-    private Player player;
-    private Texture2D playerTexture;
-
-	// Weapon properties
-	private Gun gun;
-	private Texture2D gunTexture;
+    private Player _player;
+    private Texture2D _playerTexture;
 
 	// Obstacles
-	private Wall house;
-	private Wall wall;
-	private Texture2D wallTexture;
-	private Texture2D houseTexture;
+	private Wall _house;
+	private Wall _wall;
+	private Texture2D _wallTexture;
+	private Texture2D _houseTexture;
+	private Wall[] _obstacles = new Wall[2];
 
 	// Timers
 	private TimerManager _timerManager;
-	private Timer dashCooldownTimer;
-	private Timer dashDurationTimer;
+	private Timer _dashCooldownTimer;
+	private Timer _dashDurationTimer;
 
-    public SurvivorGame()
-    {
+    public SurvivorGame() {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
 
-    protected override void Initialize()
-    {
+    protected override void Initialize() {
         _graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width / 2;
 		_graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height / 2;
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
-        player = new Player();
-
-		gun = new Gun();
-
+        _player = new Player();
 
 		// Create timers and store in timerManager
-		dashCooldownTimer = player.DashCooldownTimer();
-		dashDurationTimer = player.DashDurationTimer();
-		Timer[] timers = {dashCooldownTimer, dashDurationTimer};
+		_dashCooldownTimer = _player.DashCooldownTimer();
+		_dashDurationTimer = _player.DashDurationTimer();
+		Timer[] timers = {_dashCooldownTimer, _dashDurationTimer};
 		_timerManager = new TimerManager(timers);
 
-        inputAxis = new Vector2(0, 0);
+        _inputAxis = new Vector2(0, 0);
+
         base.Initialize();
     }
 
-    protected override void LoadContent()
-    {
+    protected override void LoadContent() {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        playerTexture = Content.Load<Texture2D>("player");
-		player.SetTexture(playerTexture);
+        _playerTexture = Content.Load<Texture2D>("player");
+		_player.SetTexture(_playerTexture);
 
-		gunTexture = Content.Load<Texture2D>("gun");
-		gun.setTexture(gunTexture);
+		_houseTexture = Content.Load<Texture2D>("house");
+		_wallTexture = Content.Load<Texture2D>("rectangle");
 
-		houseTexture = Content.Load<Texture2D>("house");
-		wallTexture = Content.Load<Texture2D>("rectangle");
+		_house = new Wall(new Rectangle(400, 200, _houseTexture.Width, _houseTexture.Height));
+		_wall = new Wall(new Rectangle(100, 400, _wallTexture.Width, _wallTexture.Height));
 
-		house = new Wall(new Rectangle(400, 200, houseTexture.Width, houseTexture.Height));
-		wall = new Wall(new Rectangle(100, 400, wallTexture.Width, wallTexture.Height));
+		_wall.SetTexture(_wallTexture);
+		_house.SetTexture(_houseTexture);
 
-		wall.SetTexture(wallTexture);
-		house.SetTexture(houseTexture);
-
+		_obstacles[0] = _house;
+		_obstacles[1] = _wall;
     }
 
-    protected override void Update(GameTime gameTime)
-    {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+    protected override void Update(GameTime gameTime) {
+        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+			Keyboard.GetState().IsKeyDown(Keys.Escape)) {
             Exit();
+		}
 
 		// Update timerManager timers
 		_timerManager.Update(gameTime);
 
-        bool up = (Keyboard.GetState().IsKeyDown(Keys.W)) ? true : false;
-        bool down = (Keyboard.GetState().IsKeyDown(Keys.S)) ? true : false;
-        bool left = (Keyboard.GetState().IsKeyDown(Keys.A)) ? true : false;
-        bool right = (Keyboard.GetState().IsKeyDown(Keys.D)) ? true : false;
+		MoveInput();
+		DashInput();
 
-        if ((up || down) && !(up && down))
-        {
-            inputAxis.Y = Keyboard.GetState().IsKeyDown(Keys.S) ? 1 : -1;
-        }
-        else
-        {
-            inputAxis.Y = 0;
-        }
-
-        if ((left || right) && !(left && right))
-        {
-            inputAxis.X = Keyboard.GetState().IsKeyDown(Keys.A) ? -1 : 1;
-        }
-        else
-        {
-            inputAxis.X = 0;
-        }
-
-        if (Keyboard.GetState().IsKeyDown(Keys.Space))
-        {
-			// On dash, call the player method that instantiates timer and assign to variable
-			// Pass that variable to the timerManager object
-
-			if (player.GetDash())
-			{
-				player.Dash(inputAxis);
-				house.Update(player);
-				wall.Update(player);
-				dashCooldownTimer.Start();
-				dashDurationTimer.Start();
-			}
-		}
-
-        player.Update(inputAxis);
-		gun.Update(player.GetPosition());
-		house.Update(player);
-		wall.Update(player);
+        _player.Update(_inputAxis);
+		UpdateObstacles(_player);
 
         base.Update(gameTime);
     }
 
-    protected override void Draw(GameTime gameTime)
-    {
+    protected override void Draw(GameTime gameTime) {
         //displayFrames(gameTime);
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin();
-		gun.Draw(_spriteBatch);
-		house.Draw(_spriteBatch);
-		wall.Draw(_spriteBatch);
-        player.Draw(_spriteBatch);
+		_house.Draw(_spriteBatch);
+		_wall.Draw(_spriteBatch);
+        _player.Draw(_spriteBatch);
         _spriteBatch.End();
 
         base.Draw(gameTime);
     }
 
-    private void displayFrames(GameTime gameTime)
-    {
+    private void displayFrames(GameTime gameTime) {
         float frameRate = 1 / (float)gameTime.ElapsedGameTime.TotalSeconds;
         Console.Write("Frames: ");
         Console.WriteLine(frameRate);
     }
+
+	private void MoveInput() {
+		bool up = (Keyboard.GetState().IsKeyDown(Keys.W)) ? true : false;
+        bool down = (Keyboard.GetState().IsKeyDown(Keys.S)) ? true : false;
+        bool left = (Keyboard.GetState().IsKeyDown(Keys.A)) ? true : false;
+        bool right = (Keyboard.GetState().IsKeyDown(Keys.D)) ? true : false;
+
+        if ((up || down) && !(up && down)) {
+            _inputAxis.Y = Keyboard.GetState().IsKeyDown(Keys.S) ? 1 : -1;
+        }
+        else {
+            _inputAxis.Y = 0;
+        }
+
+        if ((left || right) && !(left && right)) {
+            _inputAxis.X = Keyboard.GetState().IsKeyDown(Keys.A) ? -1 : 1;
+        }
+        else {
+            _inputAxis.X = 0;
+        }
+	}
+
+	private void DashInput() {
+        if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
+			if (_player.GetDash()) {
+				_player.Dash(_inputAxis);
+				UpdateObstacles(_player);
+				_dashCooldownTimer.Start();
+				_dashDurationTimer.Start();
+			}
+		}
+	}
+
+	private void UpdateObstacles(Player player) {
+		foreach (Wall obstacle in _obstacles) {
+			obstacle.Update(player);
+		}
+	}
 }
