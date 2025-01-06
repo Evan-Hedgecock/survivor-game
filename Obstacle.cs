@@ -30,12 +30,17 @@ namespace Obstacle
 		public void Update(Player player)
 		{
 			while (CheckCollision(player.GetCollider()))
-				player.Collide();
+				player.Collide(this.CollisionShape);
 		}
 
-		private bool CheckCollision(Rectangle collider)
+		public bool CheckCollision(Rectangle collider)
 		{
 			return CollisionShape.Intersects(collider);
+		}
+
+		public bool CheckCollision(Point point)
+		{
+			return CollisionShape.Contains(point);
 		}
 
 		private bool CheckContaining(Rectangle collider)

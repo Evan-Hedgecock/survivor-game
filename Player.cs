@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using Obstacle;
 using Time;
 
 namespace Character
@@ -76,10 +77,28 @@ namespace Character
 		}
 
 		// Collision Functions
-		public void Collide()
+		public void Collide(Rectangle collider)
 		{
-			Console.WriteLine(position);
 			position = previousPosition;
+			// If wall is to the left or right of player, allow vertical movement
+			if (collider.Left >= position.X + (texture.Width * 0.15) ||
+			    collider.Right <= position.X)
+				position.Y = collisionBox.Y;
+			// If wall is above or below player, allow horizontal movement
+			else if (collider.Top >= (int) (position.Y + (texture.Height * 0.15)) ||
+				collider.Bottom <= position.Y)
+				position.X = collisionBox.X;
+			else 
+			{
+				Console.Write("Collider.Top: ");
+				Console.Write(collider.Top);
+				Console.WriteLine();
+				Console.Write("position.Y + height: ");
+				Console.Write((int) (position.Y + (texture.Height * 0.15)));
+				Console.WriteLine();
+			}
+
+			
 		}
 
 		// Timer Functions
