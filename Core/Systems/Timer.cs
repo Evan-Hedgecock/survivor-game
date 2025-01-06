@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace Time;
+namespace Core.Systems;
 public class Timer {
 	private double _time;
 	private double _duration;

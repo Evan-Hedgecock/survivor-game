@@ -2,7 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Core.Entities;
-using Time;
+using Core.Systems;
 
 namespace Core.Entities;
 public class Player : Actor {

@@ -3,11 +3,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Core.Entities;
-using Obstacle;
-using Time;
+using Core.Objects;
+using Core.Systems;
 
-namespace survivor_game;
-
+namespace Scripts;
 public class SurvivorGame : Game {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -71,11 +70,11 @@ public class SurvivorGame : Game {
 		_wallTexture = Content.Load<Texture2D>("rectangle");
 		_enemyTexture = Content.Load<Texture2D>("player");
 
-		// Set Textures
+		// Create Textures
 		_player.CreateTexture(_playerTexture);
 		_enemy.CreateTexture(_enemyTexture);
-		_wall.SetTexture(_wallTexture);
-		_house.SetTexture(_houseTexture);
+		_wall.CreateTexture(_wallTexture);
+		_house.CreateTexture(_houseTexture);
     }
 
     protected override void Update(GameTime gameTime) {
