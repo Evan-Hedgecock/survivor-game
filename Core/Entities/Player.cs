@@ -19,11 +19,11 @@ public class Player : Actor {
 	// Cooldowns
 	private float _dashCooldown = 0.75f;
 
-	public Player() {
+	public Player(Vector2 position) {
 		// Positional values
-		Position = new Vector2(200, 200);
+		Position = position;
 		_facingDirection = new Vector2(1, 0);
-		_previousPosition = new Vector2(200, 200);
+		_previousPosition = Position;
 
 		// Movement values
 		_speed = 5;

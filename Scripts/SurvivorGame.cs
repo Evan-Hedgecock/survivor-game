@@ -11,6 +11,7 @@ public class SurvivorGame : Game {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
+
 	// Input properties
     private Vector2 _inputAxis;
 
@@ -21,7 +22,7 @@ public class SurvivorGame : Game {
 	private Texture2D _enemyTexture;
 
 	// Player properties
-    private Player _player = new Player();
+    private Player _player = new Player(new Vector2(200, 200));
 
 	// Enemy properties
 	private Enemy _enemy = new Enemy();
@@ -36,8 +37,11 @@ public class SurvivorGame : Game {
 	private Timer _dashCooldownTimer;
 	private Timer _dashDurationTimer;
 
+	private Camera _camera;
+
     public SurvivorGame() {
         _graphics = new GraphicsDeviceManager(this);
+		_camera = new Camera(_player.Position);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
@@ -48,6 +52,7 @@ public class SurvivorGame : Game {
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
+		Console.WriteLine();
 		// Create timers and store in timerManager
 		_dashCooldownTimer = _player.DashCooldownTimer();
 		_dashDurationTimer = _player.DashDurationTimer();
@@ -93,13 +98,15 @@ public class SurvivorGame : Game {
 		_enemy.Update(_player);
 		UpdateObstacles(_player);
 
+		_camera.Update(_player.GetPosition(), GraphicsDevice);
+
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime) {
         //DisplayFrames(gameTime);
         GraphicsDevice.Clear(Color.CornflowerBlue);
-        _spriteBatch.Begin();
+        _spriteBatch.Begin(transformMatrix: _camera.CreateMatrix(GraphicsDevice));
 		DrawObstacles(_spriteBatch);
         _player.Draw(_spriteBatch);
 		_enemy.Draw(_spriteBatch);
