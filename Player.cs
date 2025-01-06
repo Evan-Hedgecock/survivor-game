@@ -1,158 +1,151 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
 using Obstacle;
 using Time;
 
-namespace Character
-{
-    public class Player
-    {
-        private Texture2D texture { get; set; }
+namespace Character;
+public class Player {
+	private Texture2D _texture { get; set; }
 
-		// Positional values
-        private Vector2 position = new Vector2(200, 200);
-		private Vector2 facingDirection = new Vector2(1, 0);
-		private Vector2 previousPosition = new Vector2(200, 200);
-		private Rectangle collisionBox;
+	// Positional values
+	private Vector2 _position = new Vector2(200, 200);
+	private Vector2 _facingDirection = new Vector2(1, 0);
+	private Vector2 _previousPosition = new Vector2(200, 200);
+	private Rectangle _collisionBox;
+	private float _collisionBoxSize;
+	private const int _collisionBoxHeight = 10;
+	private const float _playerScale = 0.15f;
 
-		// Movement values
-		private int dashSpeed = 15;
-		private int speed = 5;
+	// Movement values
+	private int _dashSpeed = 15;
+	private int _speed = 5;
 
-		// Ability bools
-		private bool canDash = true;
-		private bool dashing = false;
+	// Ability bools
+	private bool _canDash = true;
+	private bool _dashing = false;
 
-		// Durations
-		private float dashDuration = 0.1F;
+	// Durations
+	private float _dashDuration = 0.1f;
 
-		// Cooldowns
-		private float dashCooldown = 0.75F;
+	// Cooldowns
+	private float _dashCooldown = 0.75f;
 
-		public void Update(Vector2 inputAxis)
-		{
-			ProcessMovement(inputAxis);
+	public void Update(Vector2 inputAxis) {
+		ProcessMovement(inputAxis);
 
-			// Change player direction on direction input
-			if (inputAxis.X != 0 || inputAxis.Y != 0)
-				facingDirection = inputAxis;
+		// Change player direction on direction input
+		if (inputAxis.X != 0 || inputAxis.Y != 0) {
+			_facingDirection = inputAxis;
 		}
+	}
 
-        public void Draw(SpriteBatch spriteBatch)
-        {
-			spriteBatch.Draw(texture, position, null, Color.White, 0f, new Vector2(0, 0), 0.15f, SpriteEffects.None, 0f);
-		}
+	public void Draw(SpriteBatch spriteBatch) {
+		spriteBatch.Draw(_texture, _position, null, Color.White, 0f,
+					  	 new Vector2(0, 0), _playerScale, SpriteEffects.None, 0f);
+	}
 
-
-		private void ProcessMovement(Vector2 inputAxis)
-		{
-			previousPosition = position;
-			if (dashing)
-				Dash(facingDirection);
-			else
-			{
-				position.X += (inputAxis.X * speed);
-				position.Y += (inputAxis.Y * speed);
+	public void Dash(Vector2 direction) {
+		if (_canDash || _dashing) {
+			// During first dash set _dashing to true
+			if (_canDash) {
+				_dashing = true;
 			}
-		}
-
-        public void Dash(Vector2 direction)
-		{
-			if (canDash || dashing)
-			{
-				// During first dash set dashing to true
-				if (canDash)
-					dashing = true;
-				canDash = false;
-				if (direction.X == 0  && direction.Y == 0)
-				{
-					direction = facingDirection;
-				}
-				float dSpeed = (direction.X != 0 && direction.Y != 0) ? (float) (dashSpeed / 1.5) : dashSpeed;
-				position.X += (direction.X * dSpeed);
-				position.Y += (direction.Y * dSpeed);
+			_canDash = false;
+			if (direction.X == 0  && direction.Y == 0) {
+				direction = _facingDirection;
 			}
+			float dSpeed = (direction.X != 0 && direction.Y != 0) ?
+						   (float) (_dashSpeed / 1.5) : _dashSpeed;
+			_position.X += (direction.X * dSpeed);
+			_position.Y += (direction.Y * dSpeed);
 		}
+	}
 
-		// Collision Functions
-		public void Collide(Rectangle collider)
-		{
-			position = previousPosition;
-			// If wall is to the left or right of player, allow vertical movement
-			if (collider.Left >= position.X + (texture.Width * 0.15) ||
-			    collider.Right <= position.X)
-				position.Y = collisionBox.Y - (float) (texture.Height * 0.15) + 10;
-			// If wall is above or below player, allow horizontal movement
-			else if (collider.Top >= (int) (position.Y + (texture.Height * 0.15)) ||
-				collider.Bottom <= position.Y + (float) (texture.Height * 0.15) - 10)
-				position.X = collisionBox.X;
-			else 
-			{
-				Console.Write("Collider.Top: ");
-				Console.Write(collider.Top);
-				Console.WriteLine();
-				Console.Write("position.Y + height: ");
-				Console.Write((int) (position.Y + (texture.Height * 0.15)));
-				Console.WriteLine();
-			}
+	// Collision Functions
+	public void Collide(Rectangle collider) {
+		_position = _previousPosition;
+		// If wall is to the left or right of player, allow vertical movement
+		if (collider.Left >= _position.X + (_texture.Width * _playerScale) ||
+			collider.Right <= _position.X) {
+			_position.Y = _collisionBox.Y - (float) (_texture.Height * _playerScale) + _collisionBoxHeight;
+		}
+		// If wall is above or below player, allow horizontal movement
+		else if (collider.Top >= (int) (_position.Y + (_texture.Height * _playerScale)) ||
+				 collider.Bottom <= _position.Y + (float) (_texture.Height * _playerScale) - _collisionBoxHeight) {
+			_position.X = _collisionBox.X;
+		}
+		else  {
+			Console.Write("Collider.Top: ");
+			Console.Write(collider.Top);
+			Console.WriteLine();
+			Console.Write("position.Y + height: ");
+			Console.Write((int) (_position.Y + (_texture.Height * _playerScale)));
+			Console.WriteLine();
+		}
+	}
 
-			
-		}
+	// Timer Functions
+	public Timer DashCooldownTimer() {
+		Action cb = DashReady;
+		Timer timer = new Timer(_dashCooldown, cb);
+		return timer;
+	}
 
-		// Timer Functions
-		public Timer DashCooldownTimer()
-		{
-			Action cb = DashReady;
-			Timer timer = new Timer(dashCooldown, cb);
-			return timer;
-		}
+	public Timer DashDurationTimer() {
+		Action cb = DashComplete;
+		Timer timer = new Timer(_dashDuration, cb);
+		return timer;
+	}
 
-		public Timer DashDurationTimer()
-		{
-			Action cb = DashComplete;
-			Timer timer = new Timer(dashDuration, cb);
-			return timer;
-		}
+	// Getters
+	public bool GetDash() {
+		return (_canDash || _dashing);
+	}
 
-		// Set ability bool functions
-		private void DashReady()
-		{
-			canDash = true;
-		}
-		
-		private void DashComplete()
-		{
-			dashing = false;
-		}
+	public Vector2 GetPosition() {
+		return _position;
+	}
 
-		// Getters
-		public bool GetDash()
-		{
-			return (canDash || dashing);
-		}
+	public Rectangle GetCollider() {
+		_collisionBox.X = (int) _position.X;
+		_collisionBox.Y = (int) (_position.Y + _collisionBoxSize);
+		return _collisionBox;
+	}
 
-		public Vector2 GetPosition()
-		{
-			return position;
-		}
+	// Setters
+	public void SetTexture(Texture2D texture) {
+		_texture = texture;
+		SetCollisionBox();
+	}
 
-		public Rectangle GetCollider()
-		{
-			collisionBox.X = (int) position.X;
-			collisionBox.Y = (int) (position.Y + (this.texture.Height * 0.15f)) - 10;
-			return collisionBox;
-		}
+	private void SetCollisionBox() {
+		_collisionBoxSize = ((_texture.Height * _playerScale) - _collisionBoxHeight);
+		Console.WriteLine(_collisionBoxSize);
+		_collisionBox = new Rectangle((int) _position.X,
+									  (int) (_position.Y + _collisionBoxSize),
+									  (int) (_texture.Width * _playerScale),
+									  _collisionBoxHeight);
+  	}
 
-		// Setters
-		public void SetTexture(Texture2D texture)
-		{
-			this.texture = texture;
-			collisionBox = new Rectangle(
-					(int) this.position.X,
-					(int) (this.position.Y + (this.texture.Height * 0.15f)) - 10,
-				    (int) (this.texture.Width * 0.15f), 10);
+	private void ProcessMovement(Vector2 inputAxis) {
+		_previousPosition = _position;
+		if (_dashing) {
+			Dash(_facingDirection);
 		}
+		else {
+			_position.X += (inputAxis.X * _speed);
+			_position.Y += (inputAxis.Y * _speed);
+		}
+	}
+
+	// Set ability bool functions
+	private void DashReady() {
+		_canDash = true;
+	}
+	
+	private void DashComplete() {
+		_dashing = false;
 	}
 }
