@@ -1,8 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Obstacle;
 using Time;
 
 namespace Character;
@@ -122,7 +120,6 @@ public class Player {
 
 	private void SetCollisionBox() {
 		_collisionBoxSize = ((_texture.Height * _playerScale) - _collisionBoxHeight);
-		Console.WriteLine(_collisionBoxSize);
 		_collisionBox = new Rectangle((int) _position.X,
 									  (int) (_position.Y + _collisionBoxSize),
 									  (int) (_texture.Width * _playerScale),

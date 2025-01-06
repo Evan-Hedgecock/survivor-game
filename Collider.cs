@@ -1,20 +1,24 @@
-using Character;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using Character;
 
+namespace Collider;
+public abstract class StaticCollider {
+	protected Rectangle _collisionShape;
 
-namespace Collider
-{
-	public abstract class StaticCollider
-	{
-		protected Rectangle CollisionShape;
+	public void Update(Player player) {
+		while (CheckCollision(player.GetCollider()))
+			player.Collide(_collisionShape);
+	}
+
+	public bool CheckCollision(Rectangle collider) {
+		return _collisionShape.Intersects(collider);
+	}
+
+	public bool CheckCollision(Point point) {
+		return _collisionShape.Contains(point);
+	}
+
+	private bool CheckContaining(Rectangle collider) {
+		return _collisionShape.Contains(collider);
 	}
 }
-
-
-
-
-		
-
-

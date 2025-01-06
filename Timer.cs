@@ -1,65 +1,55 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
-namespace Time
-{
-	public class TimerManager
-	{
-		private Timer[] _timers;
+namespace Time;
+public class Timer {
+	private double _time;
+	private double _duration;
+	private bool _isActive;
+	private Action _timeout;
 
-		public TimerManager(Timer[] timers)
-		{
-			_timers = timers;
-		}
-
-		public void Update(GameTime gameTime)
-		{
-			// Update every timer that is active
-			foreach (Timer timer in _timers)
-			{
-				if (timer.IsActive())
-					timer.CountDown(gameTime);
-			}
-		}
+	public Timer(double time, Action callback) {
+		_timeout = callback;
+		_duration = time;
+		_time = time;
 	}
 
-	public class Timer
-	{
-		private double _time;
-		private double _duration;
-		private bool _isActive;
-		private Action _timeout;
-
-		public Timer(double time, Action cb)
-		{
-			_timeout = cb;
-			_duration = time;
-			_time = time;
+	public void CountDown(GameTime gameTime) {
+		if (_time <= 0) {
+			_timeout();
+			Reset();
 		}
+		_time -= gameTime.ElapsedGameTime.TotalSeconds;
+	}
 
-		public void CountDown(GameTime gameTime)
-		{
-			// When time runs out, invoke timeout function, reset time, and deactivate timer
-			if (_time <= 0)
-			{
-				_timeout();
-				_time = _duration;
-				_isActive = false;
+	public void Start() {
+		_isActive = true;
+	}
+
+	public bool IsActive() {
+		return _isActive;
+	}
+
+	private void Reset() {
+		_time = _duration;
+		_isActive = false;
+	}
+}
+
+public class TimerManager {
+	private Timer[] _timers;
+
+	public TimerManager(Timer[] timers) {
+		_timers = timers;
+	}
+
+	public void Update(GameTime gameTime) {
+		// Update every timer that is active
+		foreach (Timer timer in _timers) {
+			if (timer.IsActive()) {
+				timer.CountDown(gameTime);
 			}
-			_time -= gameTime.ElapsedGameTime.TotalSeconds;
-		}
-
-		public void Start()
-		{
-			_isActive = true;
-		}
-
-		public bool IsActive()
-		{
-			return _isActive;
 		}
 	}
 }

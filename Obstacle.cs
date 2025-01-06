@@ -1,52 +1,21 @@
-using Collider;
-using Character;
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System;
+using Collider;
 
+namespace Obstacle;
+public class Wall : StaticCollider {
+	private Texture2D _texture { get; set; }
 
-namespace Obstacle
-{
-	public class Wall : StaticCollider
-	{
-		private Texture2D Texture { get; set; }
+	public Wall(Rectangle shape) {
+		_collisionShape = shape;
+	}
 
-		public Wall(Rectangle shape)
-		{
-			this.CollisionShape = shape;
-		}
+	public void SetTexture(Texture2D texture) {
+		_texture = texture;
+	}
 
-		public void SetTexture(Texture2D texture)
-		{
-			this.Texture = texture;
-		}
-
-		public void Draw(SpriteBatch spriteBatch)
-		{
-			spriteBatch.Draw(Texture, CollisionShape, Color.White);
-		}
-
-		public void Update(Player player)
-		{
-			while (CheckCollision(player.GetCollider()))
-				player.Collide(this.CollisionShape);
-		}
-
-		public bool CheckCollision(Rectangle collider)
-		{
-			return CollisionShape.Intersects(collider);
-		}
-
-		public bool CheckCollision(Point point)
-		{
-			return CollisionShape.Contains(point);
-		}
-
-		private bool CheckContaining(Rectangle collider)
-		{
-			return CollisionShape.Contains(collider);
-		}
+	public void Draw(SpriteBatch spriteBatch) {
+		spriteBatch.Draw(_texture, _collisionShape, Color.White);
 	}
 }
-
