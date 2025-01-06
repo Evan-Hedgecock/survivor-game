@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Character;
+using Enemy;
 using Obstacle;
 using Time;
 
@@ -19,9 +20,13 @@ public class SurvivorGame : Game {
 	private Texture2D _wallTexture;
 	private Texture2D _houseTexture;
     private Texture2D _playerTexture;
+	private Texture2D _enemyTexture;
 
 	// Player properties
     private Player _player = new Player();
+
+	// Enemy properties
+	private Monster _enemy = new Monster();
 
 	// Obstacles
 	private Wall _house = new Wall(new Vector2(400, 200));
@@ -65,9 +70,11 @@ public class SurvivorGame : Game {
         _playerTexture = Content.Load<Texture2D>("player");
 		_houseTexture = Content.Load<Texture2D>("house");
 		_wallTexture = Content.Load<Texture2D>("rectangle");
+		_enemyTexture = Content.Load<Texture2D>("player");
 
 		// Set Textures
 		_player.SetTexture(_playerTexture);
+		_enemy.SetTexture(_enemyTexture);
 		_wall.SetTexture(_wallTexture);
 		_house.SetTexture(_houseTexture);
     }
@@ -85,6 +92,7 @@ public class SurvivorGame : Game {
 		DashInput();
 
         _player.Update(_inputAxis);
+		_enemy.Update(_player);
 		UpdateObstacles(_player);
 
         base.Update(gameTime);
@@ -96,6 +104,7 @@ public class SurvivorGame : Game {
         _spriteBatch.Begin();
 		DrawObstacles(_spriteBatch);
         _player.Draw(_spriteBatch);
+		_enemy.Draw(_spriteBatch);
         _spriteBatch.End();
 
         base.Draw(gameTime);
