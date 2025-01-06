@@ -83,10 +83,10 @@ namespace Character
 			// If wall is to the left or right of player, allow vertical movement
 			if (collider.Left >= position.X + (texture.Width * 0.15) ||
 			    collider.Right <= position.X)
-				position.Y = collisionBox.Y;
+				position.Y = collisionBox.Y - (float) (texture.Height * 0.15) + 10;
 			// If wall is above or below player, allow horizontal movement
 			else if (collider.Top >= (int) (position.Y + (texture.Height * 0.15)) ||
-				collider.Bottom <= position.Y)
+				collider.Bottom <= position.Y + (float) (texture.Height * 0.15) - 10)
 				position.X = collisionBox.X;
 			else 
 			{
@@ -141,7 +141,7 @@ namespace Character
 		public Rectangle GetCollider()
 		{
 			collisionBox.X = (int) position.X;
-			collisionBox.Y = (int) position.Y;
+			collisionBox.Y = (int) (position.Y + (this.texture.Height * 0.15f)) - 10;
 			return collisionBox;
 		}
 
@@ -149,10 +149,10 @@ namespace Character
 		public void SetTexture(Texture2D texture)
 		{
 			this.texture = texture;
-			collisionBox = new Rectangle((int) this.position.X,
-										 (int) this.position.Y,
-										 (int) (this.texture.Width * 0.15f),
-										 (int) (this.texture.Height * 0.15f));
+			collisionBox = new Rectangle(
+					(int) this.position.X,
+					(int) (this.position.Y + (this.texture.Height * 0.15f)) - 10,
+				    (int) (this.texture.Width * 0.15f), 10);
 		}
 	}
 }
