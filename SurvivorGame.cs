@@ -10,22 +10,23 @@ namespace survivor_game;
 
 public class SurvivorGame : Game {
     private GraphicsDeviceManager _graphics;
-
     private SpriteBatch _spriteBatch;
 
 	// Input properties
     private Vector2 _inputAxis;
 
-	// Player properties
-    private Player _player;
-    private Texture2D _playerTexture;
-
-	// Obstacles
-	private Wall _house;
-	private Wall _wall;
+	// Textures
 	private Texture2D _wallTexture;
 	private Texture2D _houseTexture;
-	private Wall[] _obstacles = new Wall[2];
+    private Texture2D _playerTexture;
+
+	// Player properties
+    private Player _player = new Player();
+
+	// Obstacles
+	private Wall _house = new Wall(new Vector2(400, 200));
+	private Wall _wall = new Wall(new Vector2(100, 400));
+	private Wall[] _obstacles;
 
 	// Timers
 	private TimerManager _timerManager;
@@ -44,13 +45,13 @@ public class SurvivorGame : Game {
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
-        _player = new Player();
-
 		// Create timers and store in timerManager
 		_dashCooldownTimer = _player.DashCooldownTimer();
 		_dashDurationTimer = _player.DashDurationTimer();
 		Timer[] timers = {_dashCooldownTimer, _dashDurationTimer};
 		_timerManager = new TimerManager(timers);
+
+		_obstacles = new Wall[] {_house, _wall};
 
         _inputAxis = new Vector2(0, 0);
 
@@ -60,20 +61,15 @@ public class SurvivorGame : Game {
     protected override void LoadContent() {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+		// Load Textures
         _playerTexture = Content.Load<Texture2D>("player");
-		_player.SetTexture(_playerTexture);
-
 		_houseTexture = Content.Load<Texture2D>("house");
 		_wallTexture = Content.Load<Texture2D>("rectangle");
 
-		_house = new Wall(new Rectangle(400, 200, _houseTexture.Width, _houseTexture.Height));
-		_wall = new Wall(new Rectangle(100, 400, _wallTexture.Width, _wallTexture.Height));
-
+		// Set Textures
+		_player.SetTexture(_playerTexture);
 		_wall.SetTexture(_wallTexture);
 		_house.SetTexture(_houseTexture);
-
-		_obstacles[0] = _house;
-		_obstacles[1] = _wall;
     }
 
     protected override void Update(GameTime gameTime) {
@@ -95,18 +91,17 @@ public class SurvivorGame : Game {
     }
 
     protected override void Draw(GameTime gameTime) {
-        //displayFrames(gameTime);
+        //DisplayFrames(gameTime);
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin();
-		_house.Draw(_spriteBatch);
-		_wall.Draw(_spriteBatch);
+		DrawObstacles(_spriteBatch);
         _player.Draw(_spriteBatch);
         _spriteBatch.End();
 
         base.Draw(gameTime);
     }
 
-    private void displayFrames(GameTime gameTime) {
+    private void DisplayFrames(GameTime gameTime) {
         float frameRate = 1 / (float)gameTime.ElapsedGameTime.TotalSeconds;
         Console.Write("Frames: ");
         Console.WriteLine(frameRate);
@@ -147,6 +142,12 @@ public class SurvivorGame : Game {
 	private void UpdateObstacles(Player player) {
 		foreach (Wall obstacle in _obstacles) {
 			obstacle.Update(player);
+		}
+	}
+
+	private void DrawObstacles(SpriteBatch spriteBatch) {
+		foreach (Wall obstacle in _obstacles) {
+			obstacle.Draw(spriteBatch);
 		}
 	}
 }

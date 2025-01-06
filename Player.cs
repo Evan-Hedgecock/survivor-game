@@ -11,6 +11,8 @@ public class Player {
 	private Vector2 _position = new Vector2(200, 200);
 	private Vector2 _facingDirection = new Vector2(1, 0);
 	private Vector2 _previousPosition = new Vector2(200, 200);
+
+	// Collision values
 	private Rectangle _collisionBox;
 	private float _collisionBoxSize;
 	private const int _collisionBoxHeight = 10;
