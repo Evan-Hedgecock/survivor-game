@@ -21,13 +21,13 @@ public class Enemy : Actor {
 		_collisionBox.X = (int) _position.X;
 		_collisionBox.Y = (int) (_position.Y + _collisionBoxOffset);
 		Vector2 playerCenter = player.CollisionBox.Center.ToVector2();
-		Vector2 centerPosition = _collisionBox.Center.ToVector2();
+		Vector2 centerPosition = CollisionBox.Center.ToVector2();
 		_moveToward = Vector2.Subtract(playerCenter, centerPosition);
 		ProcessMovement(_moveToward);
 	}
 
 	public override void Draw(SpriteBatch spriteBatch) {
-		spriteBatch.Draw(Texture, _position, null, Color.Red, 0f,
+		spriteBatch.Draw(Texture, Position, null, Color.Red, 0f,
 						 new Vector2(0, 0), _scale, SpriteEffects.None, 0f);
 	}
 
