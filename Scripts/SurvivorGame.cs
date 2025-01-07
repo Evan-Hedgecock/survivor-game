@@ -5,12 +5,14 @@ using Microsoft.Xna.Framework.Input;
 using Core.Entities;
 using Core.Objects;
 using Core.Systems;
+using Core.Systems.World;
 
 namespace Scripts;
 public class SurvivorGame : Game {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
+	private GameGrid _gameGrid;
 
 	// Input properties
     private Vector2 _inputAxis;
@@ -52,7 +54,12 @@ public class SurvivorGame : Game {
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
-		Console.WriteLine();
+		// World height and width should be divisible by 10 for proper
+		// cell generation
+		Rectangle world = new Rectangle(0, 0, 500, 750);
+
+		_gameGrid = new GameGrid(world);
+		_gameGrid.CreateGrid();
 		// Create timers and store in timerManager
 		_dashCooldownTimer = _player.DashCooldownTimer();
 		_dashDurationTimer = _player.DashDurationTimer();
