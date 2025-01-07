@@ -96,7 +96,7 @@ public class SurvivorGame : Game {
 
         _player.Update(_inputAxis);
 		_enemy.Update(_player);
-		UpdateObstacles(_player);
+		UpdateObstacles();
 
 		_camera.Update(_player.GetPosition(), GraphicsDevice);
 
@@ -146,16 +146,17 @@ public class SurvivorGame : Game {
         if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
 			if (_player.GetDash()) {
 				_player.Dash(_inputAxis);
-				UpdateObstacles(_player);
+				UpdateObstacles();
 				_dashCooldownTimer.Start();
 				_dashDurationTimer.Start();
 			}
 		}
 	}
 
-	private void UpdateObstacles(Player player) {
+	private void UpdateObstacles() {
 		foreach (Wall obstacle in _obstacles) {
-			obstacle.Update(player);
+			obstacle.Update(_player);
+			obstacle.Update(_enemy);
 		}
 	}
 

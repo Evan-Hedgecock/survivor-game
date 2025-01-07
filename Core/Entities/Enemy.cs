@@ -13,6 +13,7 @@ public class Enemy : Actor {
 		Position = new Vector2(300, 100);
 		_previousPosition = Position;
 		_collisionBoxOffset = 10;
+		_collisionBoxHeight = 8;
 		_scale = 0.12f;
 		Speed = 2;
 	}
@@ -32,6 +33,7 @@ public class Enemy : Actor {
 	}
 
 	protected override void ProcessMovement(Vector2 direction) {
+		_previousPosition = Position;
 		if (direction.X < 0) {
 			_position.X -= Speed;
 		}

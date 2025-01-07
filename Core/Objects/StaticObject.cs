@@ -23,9 +23,9 @@ public abstract class StaticObject {
 	}
 	private Rectangle _collisionShape;
 
-	public void Update(Player player) {
-		while (CheckCollision(player.CollisionBox)) {
-			player.Collide(_collisionShape);
+	public void Update(Actor actor) {
+		while (CheckCollision(actor.CollisionBox)) {
+			actor.Collide(_collisionShape);
 		}
 	}
 
