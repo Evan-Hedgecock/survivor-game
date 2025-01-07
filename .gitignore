@@ -1,3 +1,5 @@
 # Ignore compiled stuff
 bin/
 obj/Debug/
+Content/bin/
+Content/obj/

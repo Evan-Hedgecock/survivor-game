@@ -1,5 +1,0 @@
-Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"/home/evan/Documents/Code/survivor-game/Content/gun.png","/home/evan/Documents/Code/survivor-game/Content/bin/DesktopGL/Content/gun.xnb","TextureProcessor","Texture2DContent",506,5169,0.0984246
-"/home/evan/Documents/Code/survivor-game/Content/house.png","/home/evan/Documents/Code/survivor-game/Content/bin/DesktopGL/Content/house.xnb","TextureProcessor","Texture2DContent",902,308181,0.0250809
-"/home/evan/Documents/Code/survivor-game/Content/player.png","/home/evan/Documents/Code/survivor-game/Content/bin/DesktopGL/Content/player.xnb","TextureProcessor","Texture2DContent",1170,320005,0.0170145
-"/home/evan/Documents/Code/survivor-game/Content/rectangle.png","/home/evan/Documents/Code/survivor-game/Content/bin/DesktopGL/Content/rectangle.xnb","TextureProcessor","Texture2DContent",168,5653,0.0008282
