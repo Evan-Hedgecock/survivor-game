@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Core.Utils;
 
 namespace Core.Entities;
 public abstract class Actor {
@@ -19,6 +21,14 @@ public abstract class Actor {
 	protected Vector2 _position;
 	protected Vector2 _facingDirection;
 	protected Vector2 _previousPosition;
+
+	protected List<Vector2> _path;
+
+	public Pathfinder Pfinder {
+		protected get { return _pathfinder; }
+		set { _pathfinder = value; }
+	}
+	protected Pathfinder _pathfinder;
 
 	public Vector2 Center { get; set; }
 

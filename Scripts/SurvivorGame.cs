@@ -31,7 +31,7 @@ public class SurvivorGame : Game {
     private Player _player = new Player(new Vector2(200, 200));
 
 	// Enemy properties
-	private Enemy _enemy = new Enemy();
+	private Enemy _enemy;
 
 	// Obstacles
 	private Wall _house = new Wall(new Vector2(400, 200));
@@ -66,6 +66,7 @@ public class SurvivorGame : Game {
 		_gameGrid.CreateGrid();
 
 		_pathfinder = new Pathfinder(_gameGrid.Grid);
+		_enemy = new Enemy(_pathfinder);
 
 		// Create timers and store in timerManager
 		_dashCooldownTimer = _player.DashCooldownTimer();
@@ -111,22 +112,6 @@ public class SurvivorGame : Game {
         _player.Update(_inputAxis);
 		_enemy.Update(_player);
 		UpdateObstacles();
-
-		if (_pathfinder.FindTargetCell(_player.Center)) {
-			Console.WriteLine("Found");
-		}
-		else {
-			Console.WriteLine("Not Found");
-		}
-
-		if (_pathfinder.FindStartCell(_enemy.Center)) {
-			Console.WriteLine("Enemy Found");
-		}
-		else {
-			Console.WriteLine("Enemy Not Found");
-		}
-		_pathfinder.FindPath();
-
 
 		_camera.Update(_player.Position, GraphicsDevice);
 
