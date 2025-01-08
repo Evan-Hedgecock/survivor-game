@@ -55,6 +55,11 @@ public class Pathfinder {
 				if (openList[i].TotalCost < current.TotalCost) {
 					current = openList[i];
 				}
+				else if (openList[i].TotalCost == current.TotalCost) {
+					if (openList[i].EstimatedCost < current.EstimatedCost) {
+						current = openList[i];
+					}
+				}
 			}
 			openList.Remove(current);
 			closedList.Add(current);
