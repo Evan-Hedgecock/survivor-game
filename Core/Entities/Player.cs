@@ -38,6 +38,8 @@ public class Player : Actor {
 		_collisionBox.X = (int) _position.X;
 		_collisionBox.Y = (int) (_position.Y + _collisionBoxOffset);
 
+		UpdateCenter();
+
 		// Change player direction on direction input
 		if (inputAxis.X != 0 || inputAxis.Y != 0) {
 			_facingDirection = inputAxis;
@@ -82,10 +84,6 @@ public class Player : Actor {
 	// Getters
 	public bool GetDash() {
 		return (_canDash || _dashing);
-	}
-
-	public Vector2 GetPosition() {
-		return _position;
 	}
 
 	protected override void ProcessMovement(Vector2 direction) {

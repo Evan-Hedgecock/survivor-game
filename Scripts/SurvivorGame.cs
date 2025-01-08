@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -6,6 +7,7 @@ using Core.Entities;
 using Core.Objects;
 using Core.Systems;
 using Core.Systems.World;
+using Core.Utils;
 
 namespace Scripts;
 public class SurvivorGame : Game {
@@ -13,6 +15,8 @@ public class SurvivorGame : Game {
     private SpriteBatch _spriteBatch;
 
 	private GameGrid _gameGrid;
+
+	private Pathfinder _pathfinder;
 
 	// Input properties
     private Vector2 _inputAxis;
@@ -60,6 +64,9 @@ public class SurvivorGame : Game {
 
 		_gameGrid = new GameGrid(world);
 		_gameGrid.CreateGrid();
+
+		_pathfinder = new Pathfinder(_gameGrid.Grid);
+
 		// Create timers and store in timerManager
 		_dashCooldownTimer = _player.DashCooldownTimer();
 		_dashDurationTimer = _player.DashDurationTimer();
@@ -105,7 +112,23 @@ public class SurvivorGame : Game {
 		_enemy.Update(_player);
 		UpdateObstacles();
 
-		_camera.Update(_player.GetPosition(), GraphicsDevice);
+		if (_pathfinder.FindTargetCell(_player.Center)) {
+			Console.WriteLine("Found");
+		}
+		else {
+			Console.WriteLine("Not Found");
+		}
+
+		if (_pathfinder.FindStartCell(_enemy.Center)) {
+			Console.WriteLine("Enemy Found");
+		}
+		else {
+			Console.WriteLine("Enemy Not Found");
+		}
+		_pathfinder.FindPath();
+
+
+		_camera.Update(_player.Position, GraphicsDevice);
 
         base.Update(gameTime);
     }

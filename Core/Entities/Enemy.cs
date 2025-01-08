@@ -24,7 +24,8 @@ public class Enemy : Actor {
 		Vector2 playerCenter = player.CollisionBox.Center.ToVector2();
 		Vector2 centerPosition = CollisionBox.Center.ToVector2();
 		_moveToward = Vector2.Subtract(playerCenter, centerPosition);
-		ProcessMovement(_moveToward);
+		//ProcessMovement(_moveToward);
+		UpdateCenter();
 	}
 
 	public override void Draw(SpriteBatch spriteBatch) {

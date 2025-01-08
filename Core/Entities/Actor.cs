@@ -20,6 +20,8 @@ public abstract class Actor {
 	protected Vector2 _facingDirection;
 	protected Vector2 _previousPosition;
 
+	public Vector2 Center { get; set; }
+
 	// Collision Values
 	public virtual Rectangle CollisionBox {
 		get { 
@@ -58,6 +60,12 @@ public abstract class Actor {
 	public virtual void CreateTexture(Texture2D texture) {
 		Texture = texture;
 		CreateCollisionBox();
+		UpdateCenter();
+	}
+
+	protected void UpdateCenter() {
+		Center = new Vector2(_position.X + _texture.Width / 2, 
+							 _position.Y + _texture.Height / 2);
 	}
 
 	protected virtual void CreateCollisionBox() {
