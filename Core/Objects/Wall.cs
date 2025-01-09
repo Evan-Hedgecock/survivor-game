@@ -6,13 +6,13 @@ using Core.Objects;
 namespace Core.Objects;
 public class Wall : StaticObject {
 
-	public Wall(Vector2 position) {
+	public Wall(Vector2 position, int width, int height) {
 		Position = position;
+		CollisionShape = new Rectangle((int) Position.X, (int) Position.Y,  width, height);
 	}
 
 	public void CreateTexture(Texture2D texture) {
 		Texture = texture;
-		CreateShape();
 	}
 
 	public void Draw(SpriteBatch spriteBatch) {
@@ -20,6 +20,6 @@ public class Wall : StaticObject {
 	}
 
 	private void CreateShape() {
-		CollisionShape = new Rectangle((int) Position.X, (int) Position.Y, Texture.Width, Texture.Height);
+		CollisionShape = new Rectangle((int) Position.X, (int) Position.Y, (int) (Texture.Width * 0.2), Texture.Height);
 	}
 }

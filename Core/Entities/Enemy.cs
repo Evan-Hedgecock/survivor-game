@@ -37,16 +37,15 @@ public class Enemy : Actor {
 	}
 
 	protected void ProcessMovement(List<Vector2> path) {
+		_previousPosition = Position;
 		Vector2 direction;
 		try {
-			Console.WriteLine(path[1]);
 			direction = new Vector2(path[1].X - Position.X,
 									path[1].Y - Position.Y);
 		}
 		catch (Exception) {
 			direction = new Vector2(0, 0);
 		}
-		Console.WriteLine(direction);
  		if (direction.X > 0) {
  			_position.X += Speed;
  		}

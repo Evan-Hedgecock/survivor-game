@@ -36,8 +36,4 @@ public abstract class StaticObject {
 	public bool CheckCollision(Point point) {
 		return _collisionShape.Contains(point);
 	}
-
-	private bool CheckContaining(Rectangle collider) {
-		return _collisionShape.Contains(collider);
-	}
 }

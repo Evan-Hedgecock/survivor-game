@@ -34,8 +34,8 @@ public class SurvivorGame : Game {
 	private Enemy _enemy;
 
 	// Obstacles
-	private Wall _house = new Wall(new Vector2(400, 200));
-	private Wall _wall = new Wall(new Vector2(100, 400));
+	private Wall _house = new Wall(new Vector2(400, 200), 40, 100);
+	private Wall _wall = new Wall(new Vector2(100, 400), 200, 20);
 	private Wall[] _obstacles;
 
 	// Timers
