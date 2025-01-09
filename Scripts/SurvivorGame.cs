@@ -34,7 +34,6 @@ public class SurvivorGame : Game {
 	private Enemy _enemy;
 
 	// Obstacles
-	private Wall _house = new Wall(new Vector2(400, 200), 40, 100);
 	private Wall _wall = new Wall(new Vector2(100, 400), 200, 20);
 	private Wall[] _obstacles;
 
@@ -62,8 +61,9 @@ public class SurvivorGame : Game {
 		// cell generation
 		Rectangle world = new Rectangle(0, 0, 500, 750);
 
+		_obstacles = new Wall[] {_wall};
 		_gameGrid = new GameGrid(world);
-		_gameGrid.CreateGrid();
+		_gameGrid.CreateGrid(_obstacles);
 
 		_pathfinder = new Pathfinder(_gameGrid.Grid);
 		_enemy = new Enemy(_pathfinder);
@@ -74,7 +74,6 @@ public class SurvivorGame : Game {
 		Timer[] timers = {_dashCooldownTimer, _dashDurationTimer};
 		_timerManager = new TimerManager(timers);
 
-		_obstacles = new Wall[] {_house, _wall};
 
         _inputAxis = new Vector2(0, 0);
 
@@ -94,7 +93,6 @@ public class SurvivorGame : Game {
 		_player.CreateTexture(_playerTexture);
 		_enemy.CreateTexture(_enemyTexture);
 		_wall.CreateTexture(_wallTexture);
-		_house.CreateTexture(_houseTexture);
     }
 
     protected override void Update(GameTime gameTime) {

@@ -1,4 +1,6 @@
+using System;
 using Microsoft.Xna.Framework;
+using Core.Objects;
 
 namespace Core.Systems.World;
 public class GameGrid {
@@ -27,12 +29,17 @@ public class GameGrid {
 	}
 
 	// Convert world coordinates to game grid
-	public void CreateGrid() {
+	public void CreateGrid(Wall[] obstacles) {
 		for (int i = 0; i < _rows; i++) {
 			for (int j = 0; j < _columns; j++) {
 				Grid[i, j] = new GridCell(new Vector2(_position.X + (i * _cellSize),
 													_position.Y + (j * _cellSize)),
 										  _cellSize, new int[2] {i, j});
+				foreach (Wall obstacle in obstacles) {
+					if (Grid[i, j].Cell.Intersects(obstacle.CollisionShape)) {
+						Grid[i, j].TraversalSpeed = 0;
+					}
+				}
 			}
 		}
 	}
@@ -80,5 +87,6 @@ public class GridCell {
 		_size = size;
 		Position = position;
 		Cell = new Rectangle((int) position.X, (int) position.Y, size, size);
+		TraversalSpeed = 1;
 	}
 }

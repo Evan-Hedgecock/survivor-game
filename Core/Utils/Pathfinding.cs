@@ -52,6 +52,7 @@ public class Pathfinder {
 		while(true) {
 			current = openList[0];
 			for (int i = 0; i < openList.Count; i++) {
+				//Console.WriteLine("Checking for which cell in openList to set as current");
 				if (openList[i].TotalCost < current.TotalCost) {
 					current = openList[i];
 				}
@@ -61,9 +62,11 @@ public class Pathfinder {
 					}
 				}
 			}
+			//Console.WriteLine("Remove current from openList and add to closedList");
 			openList.Remove(current);
 			closedList.Add(current);
-			if (current.GridPosition == _targetCell.GridPosition) {
+			if (current.GridPosition[0] == _targetCell.GridPosition[0] &&
+				current.GridPosition[1] == _targetCell.GridPosition[1]) {
 				List<Vector2> waypoints = new List<Vector2>();
 				PathCell currentPath = current;
 				while (true) {
@@ -78,42 +81,63 @@ public class Pathfinder {
 				waypoints.Reverse();
 				// Remove the starting position because it is where the entity
 				// finding path is currently positioned. Probably.
+				Console.WriteLine("Waypoints: ");
+				foreach (Vector2 waypoint in waypoints) {
+					Console.WriteLine(waypoint);
+				}
 				return waypoints;
 			}
 
+			Console.WriteLine("Before checking neighbors");
 			for (int i = -1; i <= 1; i++) {
 				for (int j = -1; j <= 1; j++) {
+					if (i == 0 && j == 0) {
+						continue;
+					}
+					// If neighbor is blocked, or neighbor is in closed list
+						// Continue to next neighbor
+					// If this new path to neighbor is shorter, or neighbor is not in open list
+						// set fcost of neighbor
+						// set parent of neighbor to current
+						// add neighbor to open list
+					GridCell neighbor;
 					try {
-						if (i == 0 && j == 0) {
-							continue;
-						}
-						PathCell neighbor = new PathCell(
-												Grid[current.GridPosition[0] + i,
-													 current.GridPosition[1] + j],
-												current, _targetCell);
-						bool neighborInClosedList = false;
-						foreach (PathCell cell in closedList) {
-							if (cell.GridPosition == new int[] {i, j}) {
-								Console.WriteLine("Neighbor is in closed list");
-								if (closedList.Contains(neighbor)) {
-									Console.WriteLine("And it was found by checking if closedList.Contains(neighbor) yay!");
-								}
-								else {
-									Console.WriteLine("But is there a better way to find it?");
-								}
-								neighborInClosedList = true;
-								break;
-							}
-						}
-						if (neighborInClosedList) {
-							continue;
-						}
-						if (!openList.Contains(neighbor)) {
-							openList.Add(neighbor);
+						neighbor = Grid[current.GridPosition[0] + i,
+										current.GridPosition[1] + j];
+					} catch (Exception) {
+						Console.WriteLine("Neighbor outside grid bounds");
+						continue;
+					}
+
+					if (neighbor.Blocked) {
+						Console.WriteLine("Neighbor is blocked");
+						continue;
+					}
+					bool neighborInClosed = false;
+					foreach (PathCell cell in closedList) {
+						if (cell.GridPosition[0] == neighbor.GridPosition[0] &&
+							cell.GridPosition[1] == neighbor.GridPosition[1]) {
+							neighborInClosed = true;
+							break;
 						}
 					}
-					catch (Exception) {
-						Console.WriteLine("Trying to create a neighbor cell that is outside of grid");
+					if (neighborInClosed) {
+						continue;
+					}
+					PathCell path = new PathCell(neighbor, _targetCell);
+					bool pathInOpen = false;
+					foreach (PathCell cell in openList) {
+						if (cell.GridPosition[0] == path.GridPosition[0] &&
+							cell.GridPosition[1] == path.GridPosition[1]) {
+							pathInOpen = true;
+							break;
+						}
+					}
+					if (!pathInOpen) {
+						path.Parent = current;
+						path.SetTotalCost();
+						Console.WriteLine("adding path to openlist");
+						openList.Add(path);
 					}
 				}
 			}
@@ -124,11 +148,6 @@ public class Pathfinder {
 		foreach (GridCell cell in Grid) {
 			if (cell.Cell.Contains(targetPosition)) {
 				_targetCell = cell;
-//				Console.Write("Target cell in grid position: ");
-//				Console.Write(_targetCell.GridPosition[0]);
-//				Console.Write(", ");
-//				Console.Write(_targetCell.GridPosition[1]);
-//				Console.WriteLine();
 				return true;
 			}
 		}
@@ -152,20 +171,21 @@ public class PathCell : GridCell {
 	public int EstimatedCost { get; set; }
 	public int TotalCost { get; set; }
 	public PathCell Parent { get; set; }
+	public GridCell Target { get; set; }
 
 	// Used for the starting position cell
 	public PathCell(GridCell gridCell) : base(gridCell.Position, gridCell.Size, gridCell.GridPosition) {
 		TotalCost = 0;
 	}
 
-	public PathCell(GridCell gridCell, PathCell parent, GridCell target) : base(gridCell.Position, gridCell.Size, gridCell.GridPosition) {
-		int row = gridCell.GridPosition[0];
-		int col = gridCell.GridPosition[1];
+	public PathCell(GridCell gridCell, GridCell target) : base(gridCell.Position, gridCell.Size, gridCell.GridPosition) {
+		GridPosition = new int[] {gridCell.GridPosition[0], gridCell.GridPosition[1]};
+		Target = target;
+	}
 
-		Parent = parent;
-
-		if (row - parent.GridPosition[0] == 0 ||
-			col - parent.GridPosition[1] == 0) {
+	public void SetTotalCost() {
+		if (GridPosition[0] - Parent.GridPosition[0] == 0 ||
+			GridPosition[1] - Parent.GridPosition[1] == 0) {
 			ActualCost = 10;
 		}
 		else {
@@ -173,8 +193,8 @@ public class PathCell : GridCell {
 		}
 
 		EstimatedCost = 0;
-		int targetRowDiff = Math.Abs(row - target.GridPosition[0]);
-		int targetColDiff = Math.Abs(col - target.GridPosition[1]);
+		int targetRowDiff = Math.Abs(GridPosition[0] - Target.GridPosition[0]);
+		int targetColDiff = Math.Abs(GridPosition[1] - Target.GridPosition[1]);
 		// Increase EstimatedCost diagonally until straight line is available
 		while (targetRowDiff > 0 && targetColDiff > 0) {
 			EstimatedCost += 14;
