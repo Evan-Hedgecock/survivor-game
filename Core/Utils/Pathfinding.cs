@@ -32,9 +32,7 @@ public class Pathfinder {
 		List<PathCell> closedList = new List<PathCell>();
 		PathCell current;
 
-		Console.WriteLine(_startCell);
 		openList.Add(new PathCell(_startCell));
-		Console.WriteLine("After adding start cell to open list");
 		// Add start cell to openList
 		// Infinite loop
 			// set current to cell in openList with lowest Total cost
@@ -83,10 +81,6 @@ public class Pathfinder {
 				waypoints.Reverse();
 				// Remove the starting position because it is where the entity
 				// finding path is currently positioned. Probably.
-				 Console.WriteLine("Waypoints: ");
-				 foreach (Vector2 waypoint in waypoints) {
-					 Console.WriteLine(waypoint);
-				 }
 				return waypoints;
 			}
 
@@ -126,20 +120,28 @@ public class Pathfinder {
 					if (neighborInClosed) {
 						continue;
 					}
-					PathCell path = new PathCell(neighbor, _targetCell);
+					PathCell path = new PathCell(neighbor, _targetCell, _startCell);
 					bool pathInOpen = false;
 					foreach (PathCell cell in openList) {
 						if (cell.GridPosition[0] == path.GridPosition[0] &&
 							cell.GridPosition[1] == path.GridPosition[1]) {
 							pathInOpen = true;
+							path = cell;
 							break;
 						}
 					}
-					if (!pathInOpen) {
+					int tentativeActualCost = path.CalculateActualCost(current);
+					// Might have to recursively update all of paths original parents when a new shorter path is found
+					if (!pathInOpen || tentativeActualCost < path.ActualCost) {
 						path.Parent = current;
+						// If the tentativeActualCost was actually less than the current path.ActualCost
+						// Update the parent of this current neighbor to reference the updated version
+						// Do the same for each of its parents as well
 						path.SetTotalCost();
 						//Console.WriteLine("adding path to openlist");
-						openList.Add(path);
+						if (!pathInOpen) {
+							openList.Add(path);
+						}
 					}
 				}
 			}
@@ -195,15 +197,29 @@ public class PathCell : GridCell {
 	public int TotalCost { get; set; }
 	public PathCell Parent { get; set; }
 	public GridCell Target { get; set; }
+	public GridCell Start { get; set; }
 
 	// Used for the starting position cell
 	public PathCell(GridCell gridCell) : base(gridCell.Position, gridCell.Size, gridCell.GridPosition) {
 		TotalCost = 0;
 	}
 
-	public PathCell(GridCell gridCell, GridCell target) : base(gridCell.Position, gridCell.Size, gridCell.GridPosition) {
+	public PathCell(GridCell gridCell, GridCell target, GridCell start) : base(gridCell.Position, gridCell.Size, gridCell.GridPosition) {
 		GridPosition = new int[] {gridCell.GridPosition[0], gridCell.GridPosition[1]};
 		Target = target;
+		Start = start;
+	}
+
+	public int CalculateActualCost(PathCell parent) {
+		int actualCost = 0;
+		// Calculate actual cost from current
+		if (GridPosition[0] - parent.GridPosition[0] == 0 ||
+			GridPosition[1] - parent.GridPosition[1] == 0) {
+			actualCost += 10;
+		} else {
+			actualCost += 14;
+		}
+		return actualCost + parent.ActualCost;
 	}
 
 	public void SetTotalCost() {
@@ -214,6 +230,7 @@ public class PathCell : GridCell {
 		else {
 			ActualCost = 14;
 		}
+		ActualCost += Parent.ActualCost;
 
 		EstimatedCost = 0;
 		int targetRowDiff = Math.Abs(GridPosition[0] - Target.GridPosition[0]);

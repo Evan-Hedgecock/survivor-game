@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Core.Objects;
 
 namespace Core.Systems.World;
@@ -14,12 +15,14 @@ public class GameGrid {
 	
 	public GridCell[,] Grid { get; private set; }
 
+	private Texture2D _texture;
 
 	public Vector2 _position; 
 
+
 	private int _rows;
 	private int _columns;
-	private int _cellSize = 10;
+	private int _cellSize = 30;
 
 	public GameGrid(Rectangle world) {
 		_position = new Vector2(world.X, world.Y);
@@ -48,11 +51,15 @@ public class GameGrid {
 
 public class GridCell {
 
+	public Texture2D Texture { get; set; }
+
 	public int Size {
 		get { return _size; }
 		set { _size = value; }
 	}
 	private int _size;
+
+	public Color Colour { get; set; }
 
 	public int[] GridPosition {
 		get { return _gridPosition; }
@@ -88,5 +95,19 @@ public class GridCell {
 		Position = position;
 		Cell = new Rectangle((int) position.X, (int) position.Y, size, size);
 		TraversalSpeed = 1;
+		Colour = Color.Purple;
 	}
+
+	public void Draw(SpriteBatch spriteBatch, int num) {
+		if (Colour != Color.Purple) {
+			spriteBatch.Draw(Texture, Cell, Colour);
+			return;
+		}
+		if (num % 2 == 0) {
+			spriteBatch.Draw(Texture, Cell, Color.CornflowerBlue);
+		} else {
+			spriteBatch.Draw(Texture, Cell, Color.Black);
+		}
+	}
+
 }

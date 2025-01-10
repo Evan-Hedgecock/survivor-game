@@ -21,8 +21,8 @@ public class Player : Actor {
 	private float _dashCooldown = 0.75f;
 
 	public Player(Vector2 position) {
-		_height = 50;
-		_width = 30;
+		_height = 100;
+		_width = 5;
 		Body = new Rectangle((int) position.X, (int) position.Y, _width, _height);
 		_facingDirection = new Vector2(1, 0);
 
