@@ -22,7 +22,7 @@ public class GameGrid {
 
 	private int _rows;
 	private int _columns;
-	private int _cellSize = 30;
+	private int _cellSize = 20;
 
 	public GameGrid(Rectangle world) {
 		_position = new Vector2(world.X, world.Y);

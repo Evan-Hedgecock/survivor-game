@@ -60,7 +60,6 @@ public class Enemy : Actor {
 	}
 
 	protected void ProcessMovement() {
-		Console.WriteLine("Enemy is processing movement");
 		Vector2 direction;
 		try {
 			direction = new Vector2(_path[0].X - CollisionBox.X,
@@ -84,15 +83,11 @@ public class Enemy : Actor {
  		}
  		try {
  			if (_body.Contains(_path[0])) {
- 				Console.Write("Removing path[0]: ");
- 				Console.WriteLine(_path[0]);
  				_path.RemoveAt(0);
  			}
  		} catch (Exception) {
  			return;
  		}
- 		Console.WriteLine("Lerp of path[0] and body current position: ");
- 		Console.WriteLine(Vector2.Lerp(_path[0], new Vector2(_body.X, _body.Y), 0.5f));
 	}
 
 	public Timer FindPathTimer() {

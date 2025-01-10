@@ -11,7 +11,7 @@ using Core.Utils;
 
 namespace Scripts;
 public class SurvivorGame : Game {
-	private bool drawGrid = false;
+	private bool drawGrid = true;
 
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;

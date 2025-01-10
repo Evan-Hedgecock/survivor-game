@@ -21,6 +21,7 @@ public class Pathfinder {
 	public GridCell[,] Grid { get; set; }
 
 	private GridCell _targetCell;
+	private GridCell _unblockedTargetCell;
 	private GridCell _startCell;
 
 	public Pathfinder(GridCell[,] grid) {
@@ -50,7 +51,12 @@ public class Pathfinder {
 				// if neighbor is not in open
 					// add neighbor to open
 		while(true) {
-			current = openList[0];
+			try {
+				current = openList[0];
+			} catch (Exception) {
+				openList.Add(new PathCell(_startCell));
+				current = openList[0];
+			}
 			for (int i = 0; i < openList.Count; i++) {
 				//Console.WriteLine("Checking for which cell in openList to set as current");
 				if (openList[i].TotalCost < current.TotalCost) {
@@ -101,7 +107,7 @@ public class Pathfinder {
 						neighbor = Grid[current.GridPosition[0] + i,
 										current.GridPosition[1] + j];
 					} catch (Exception) {
-						Console.WriteLine("Neighbor outside grid bounds");
+						//Console.WriteLine("Neighbor outside grid bounds");
 						break;
 					}
 
@@ -151,7 +157,22 @@ public class Pathfinder {
 	public bool FindTargetCell(Rectangle targetPosition) {
 		foreach (GridCell cell in Grid) {
 			if (cell.Cell.Intersects(targetPosition)) {
-				_targetCell = cell;
+				if (!cell.Blocked) {
+					_unblockedTargetCell = cell;
+				}
+				if (cell.Blocked) {
+					// Check the right and bottom cells
+					// If one of them is not blocked return that
+					GridCell right = Grid[cell.GridPosition[0] + 1, cell.GridPosition[1]];
+					GridCell bottom = Grid[cell.GridPosition[0], cell.GridPosition[1] + 1];
+					if (!right.Blocked) {
+						_targetCell = right;
+					} else if (!bottom.Blocked) {
+						_targetCell = bottom;
+					}
+				} else {
+					_targetCell = cell;
+				}
 				return true;
 			}
 		}
