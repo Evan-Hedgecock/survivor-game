@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Core.Entities;
+using Core.Objects;
 using Core.Systems;
 
 namespace Core.Entities;
@@ -20,25 +21,24 @@ public class Player : Actor {
 	private float _dashCooldown = 0.75f;
 
 	public Player(Vector2 position) {
-		// Positional values
-		Position = position;
+		_height = 50;
+		_width = 30;
+		Body = new Rectangle((int) position.X, (int) position.Y, _width, _height);
 		_facingDirection = new Vector2(1, 0);
-		_previousPosition = Position;
 
 		// Movement values
 		_speed = 5;
 
 		// Collision values
 		_collisionBoxHeight = 10;
-		_scale = 0.15f;
+		CollisionBox = new Rectangle(_body.X, _body.Y + _height - _collisionBoxHeight,
+									 _body.Width, _collisionBoxHeight);
 	}
 
-	public void Update(Vector2 inputAxis) {
-		ProcessMovement(inputAxis);
-		_collisionBox.X = (int) _position.X;
-		_collisionBox.Y = (int) (_position.Y + _collisionBoxOffset);
-
-		UpdateCenter();
+	public void Update(Vector2 inputAxis, Wall[] walls) {
+		_collisionBox.X = _body.X;
+		_collisionBox.Y = _body.Y + _height - _collisionBoxHeight;
+		ProcessMovement(inputAxis, walls);
 
 		// Change player direction on direction input
 		if (inputAxis.X != 0 || inputAxis.Y != 0) {
@@ -47,11 +47,10 @@ public class Player : Actor {
 	}
 
 	public override void Draw(SpriteBatch spriteBatch) {
-		spriteBatch.Draw(Texture, _position, null, Color.White, 0f,
-					  	 new Vector2(0, 0), _scale, SpriteEffects.None, 0f);
+		spriteBatch.Draw(Texture, Body, Color.White);
 	}
 
-	public void Dash(Vector2 direction) {
+	public void Dash(Vector2 direction, Wall[] walls) {
 		if (_canDash || _dashing) {
 			// During first dash set _dashing to true
 			if (_canDash) {
@@ -63,8 +62,11 @@ public class Player : Actor {
 			}
 			float dSpeed = (direction.X != 0 && direction.Y != 0) ?
 						   (float) (_dashSpeed / 1.5) : _dashSpeed;
-			_position.X += (direction.X * dSpeed);
-			_position.Y += (direction.Y * dSpeed);
+			Vector2 moveDirection = CheckCollisions(direction, walls, dSpeed);
+			_body.X += (int) (moveDirection.X * (direction.X * dSpeed));
+			_body.Y += (int) (moveDirection.Y * (direction.Y * dSpeed));
+			_collisionBox.X = _body.X;
+			_collisionBox.Y = _body.Y + _height - _collisionBoxHeight;
 		}
 	}
 
@@ -86,14 +88,14 @@ public class Player : Actor {
 		return (_canDash || _dashing);
 	}
 
-	protected override void ProcessMovement(Vector2 direction) {
-		_previousPosition = _position;
+	protected void ProcessMovement(Vector2 direction, Wall[] walls) {
 		if (_dashing) {
-			Dash(_facingDirection);
+			Dash(_facingDirection, walls);
 		}
 		else {
-			_position.X += (direction.X * _speed);
-			_position.Y += (direction.Y * _speed);
+			Vector2 moveDirection = CheckCollisions(direction, walls);
+			_body.X += (int) (moveDirection.X * (direction.X * _speed));
+			_body.Y += (int) (moveDirection.Y * (direction.Y * _speed));
 		}
 	}
 

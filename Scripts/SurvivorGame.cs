@@ -26,6 +26,7 @@ public class SurvivorGame : Game {
 	private Texture2D _houseTexture;
     private Texture2D _playerTexture;
 	private Texture2D _enemyTexture;
+	private Texture2D _collisionBoxTexture;
 
 	// Player properties
     private Player _player = new Player(new Vector2(200, 200));
@@ -34,7 +35,7 @@ public class SurvivorGame : Game {
 	private Enemy _enemy;
 
 	// Obstacles
-	private Wall _wall = new Wall(new Vector2(100, 400), 200, 20);
+	private Wall _wall = new Wall(new Vector2(100, 400), 200, 100);
 	private Wall[] _obstacles;
 
 	// Timers
@@ -46,7 +47,7 @@ public class SurvivorGame : Game {
 
     public SurvivorGame() {
         _graphics = new GraphicsDeviceManager(this);
-		_camera = new Camera(_player.Position);
+		_camera = new Camera(new Vector2 (_player.Body.X, _player.Body.Y));
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
@@ -59,7 +60,7 @@ public class SurvivorGame : Game {
 
 		// World height and width should be divisible by 10 for proper
 		// cell generation
-		Rectangle world = new Rectangle(0, 0, 500, 750);
+		Rectangle world = new Rectangle(0, 0, 10000, 10000);
 
 		_obstacles = new Wall[] {_wall};
 		_gameGrid = new GameGrid(world);
@@ -90,8 +91,8 @@ public class SurvivorGame : Game {
 		_enemyTexture = Content.Load<Texture2D>("player");
 
 		// Create Textures
-		_player.CreateTexture(_playerTexture);
-		_enemy.CreateTexture(_enemyTexture);
+		_player.Texture = _playerTexture;
+		_enemy.Texture = _enemyTexture;
 		_wall.CreateTexture(_wallTexture);
     }
 
@@ -107,11 +108,10 @@ public class SurvivorGame : Game {
 		MoveInput();
 		DashInput();
 
-        _player.Update(_inputAxis);
+        _player.Update(_inputAxis, _obstacles);
 		_enemy.Update(_player);
-		UpdateObstacles();
 
-		_camera.Update(_player.Position, GraphicsDevice);
+		_camera.Update(new Vector2(_player.Body.X, _player.Body.Y), GraphicsDevice);
 
         base.Update(gameTime);
     }
@@ -158,18 +158,10 @@ public class SurvivorGame : Game {
 	private void DashInput() {
         if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
 			if (_player.GetDash()) {
-				_player.Dash(_inputAxis);
-				UpdateObstacles();
+				_player.Dash(_inputAxis, _obstacles);
 				_dashCooldownTimer.Start();
 				_dashDurationTimer.Start();
 			}
-		}
-	}
-
-	private void UpdateObstacles() {
-		foreach (Wall obstacle in _obstacles) {
-			obstacle.Update(_player);
-			obstacle.Update(_enemy);
 		}
 	}
 

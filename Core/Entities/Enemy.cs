@@ -9,55 +9,59 @@ namespace Core.Entities;
 public class Enemy : Actor {
 
 	public Enemy(Pathfinder pathfinder) {
-		Position = new Vector2(300, 100);
-		_previousPosition = Position;
-		_collisionBoxOffset = 10;
 		_collisionBoxHeight = 8;
+		_height = 40;
+		_width = 30;
+		Body = new Rectangle(400, 500, _width, _height);
+		CollisionBox = new Rectangle(_body.X,
+									 _body.Y + _height - _collisionBoxHeight,
+									 _body.Width, _body.Height);
 		_scale = 0.12f;
 		Speed = 2;
 		Pfinder = pathfinder;
 	}
 
 	public void Update(Player player) {
-		_collisionBox.X = (int) _position.X;
-		_collisionBox.Y = (int) (_position.Y + _collisionBoxOffset);
-
-		Pfinder.FindTargetCell(player.Position);
-		Pfinder.FindStartCell(Position);
+		Console.WriteLine("Finding target");
+		Pfinder.FindTargetCell(player.CollisionBox);
+		Console.WriteLine("Finding start");
+		Console.WriteLine(CollisionBox);
+		Pfinder.FindStartCell(_collisionBox);
+		Console.WriteLine("Finding path");
 		ProcessMovement(Pfinder.FindPath());
-		UpdateCenter();
+		_collisionBox.X = Body.X;
+		_collisionBox.Y = Body.Y + _height - _collisionBoxHeight;
+
 	}
 
 	public override void Draw(SpriteBatch spriteBatch) {
-		spriteBatch.Draw(Texture, Position, null, Color.Red, 0f,
-						 new Vector2(0, 0), _scale, SpriteEffects.None, 0f);
+		spriteBatch.Draw(Texture, Body, Color.Red);
 	}
 
-	protected override void ProcessMovement(Vector2 direction) {
+	protected void ProcessMovement(Vector2 direction) {
 	}
 
 	protected void ProcessMovement(List<Vector2> path) {
-		_previousPosition = Position;
 		Vector2 direction;
 		try {
-			direction = new Vector2(path[1].X - Position.X,
-									path[1].Y - Position.Y);
+			direction = new Vector2(path[1].X - CollisionBox.X,
+									path[1].Y - CollisionBox.Y);
 		}
 		catch (Exception) {
 			direction = new Vector2(0, 0);
 		}
  		if (direction.X > 0) {
- 			_position.X += Speed;
+ 			_body.X += Speed;
  		}
  		else if (direction.X < 0) {
- 			_position.X -= Speed;
+ 			_body.X -= Speed;
  		}
  
  		if (direction.Y > 0) {
- 			_position.Y += Speed;
+ 			_body.Y += Speed;
  		}
  		else if (direction.Y < 0) {
- 			_position.Y -= Speed;
+ 			_body.Y -= Speed;
 		}
 	}
 }

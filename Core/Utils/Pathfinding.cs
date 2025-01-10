@@ -32,7 +32,9 @@ public class Pathfinder {
 		List<PathCell> closedList = new List<PathCell>();
 		PathCell current;
 
+		Console.WriteLine(_startCell);
 		openList.Add(new PathCell(_startCell));
+		Console.WriteLine("After adding start cell to open list");
 		// Add start cell to openList
 		// Infinite loop
 			// set current to cell in openList with lowest Total cost
@@ -81,14 +83,14 @@ public class Pathfinder {
 				waypoints.Reverse();
 				// Remove the starting position because it is where the entity
 				// finding path is currently positioned. Probably.
-				Console.WriteLine("Waypoints: ");
-				foreach (Vector2 waypoint in waypoints) {
-					Console.WriteLine(waypoint);
-				}
+				 Console.WriteLine("Waypoints: ");
+				 foreach (Vector2 waypoint in waypoints) {
+					 Console.WriteLine(waypoint);
+				 }
 				return waypoints;
 			}
 
-			Console.WriteLine("Before checking neighbors");
+			//Console.WriteLine("Before checking neighbors");
 			for (int i = -1; i <= 1; i++) {
 				for (int j = -1; j <= 1; j++) {
 					if (i == 0 && j == 0) {
@@ -106,11 +108,11 @@ public class Pathfinder {
 										current.GridPosition[1] + j];
 					} catch (Exception) {
 						Console.WriteLine("Neighbor outside grid bounds");
-						continue;
+						break;
 					}
 
 					if (neighbor.Blocked) {
-						Console.WriteLine("Neighbor is blocked");
+						//Console.WriteLine("Neighbor is blocked");
 						continue;
 					}
 					bool neighborInClosed = false;
@@ -136,7 +138,7 @@ public class Pathfinder {
 					if (!pathInOpen) {
 						path.Parent = current;
 						path.SetTotalCost();
-						Console.WriteLine("adding path to openlist");
+						//Console.WriteLine("adding path to openlist");
 						openList.Add(path);
 					}
 				}
@@ -144,10 +146,31 @@ public class Pathfinder {
 		}
 	}
 
+	public bool FindTargetCell(Rectangle targetPosition) {
+		foreach (GridCell cell in Grid) {
+			if (cell.Cell.Intersects(targetPosition)) {
+				_targetCell = cell;
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 	public bool FindTargetCell(Vector2 targetPosition) {
 		foreach (GridCell cell in Grid) {
 			if (cell.Cell.Contains(targetPosition)) {
 				_targetCell = cell;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public bool FindStartCell(Rectangle startPosition) {
+		foreach (GridCell cell in Grid) {
+			if (cell.Cell.Intersects(startPosition)) {
+				_startCell = cell;
 				return true;
 			}
 		}

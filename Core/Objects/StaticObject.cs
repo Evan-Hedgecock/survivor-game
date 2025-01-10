@@ -23,12 +23,6 @@ public abstract class StaticObject {
 	}
 	private Rectangle _collisionShape;
 
-	public void Update(Actor actor) {
-		while (CheckCollision(actor.CollisionBox)) {
-			actor.Collide(_collisionShape);
-		}
-	}
-
 	public bool CheckCollision(Rectangle collider) {
 		return _collisionShape.Intersects(collider);
 	}
