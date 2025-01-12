@@ -68,13 +68,13 @@ public abstract class Actor {
 	protected Vector2 CheckCollisions(Vector2 direction, Wall[] walls, float speed) {
 		Vector2 moveDirection = new Vector2(1, 1);
 		Rectangle xCollision = new Rectangle(
-			_collisionBox.X + (int) (direction.X * speed) + (int) (direction.X * 1),
-			_collisionBox.Y + (int) (direction.Y * 1),
+			_collisionBox.X + (int) (direction.X * speed),
+			_collisionBox.Y,
 			_collisionBox.Width,
 			_collisionBox.Height);
 		Rectangle yCollision = new Rectangle(
-			_collisionBox.X + (int) (direction.X * 1),
-			_collisionBox.Y + (int) (direction.Y * speed) + (int) (direction.Y * 1),
+			_collisionBox.X,
+			_collisionBox.Y + (int) (direction.Y * speed),
 			_collisionBox.Width,
 			_collisionBox.Height);
 

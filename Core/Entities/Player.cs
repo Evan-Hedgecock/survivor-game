@@ -50,21 +50,19 @@ public class Player : Actor {
 		spriteBatch.Draw(Texture, Body, Color.White);
 	}
 
-	public void Dash(Vector2 direction, Wall[] walls) {
+	public void Dash(Wall[] walls) {
 		if (_canDash || _dashing) {
 			// During first dash set _dashing to true
 			if (_canDash) {
 				_dashing = true;
 			}
 			_canDash = false;
-			if (direction.X == 0  && direction.Y == 0) {
-				direction = _facingDirection;
-			}
-			float dSpeed = (direction.X != 0 && direction.Y != 0) ?
+			float dSpeed = (_facingDirection.X != 0 && _facingDirection.Y != 0) ?
 						   (float) (_dashSpeed / 1.5) : _dashSpeed;
-			Vector2 moveDirection = CheckCollisions(direction, walls, dSpeed);
-			_body.X += (int) (moveDirection.X * (direction.X * dSpeed));
-			_body.Y += (int) (moveDirection.Y * (direction.Y * dSpeed));
+			Vector2 moveDirection = CheckCollisions(_facingDirection, walls, dSpeed);
+			Console.WriteLine(moveDirection);
+			_body.X += (int) (moveDirection.X * (_facingDirection.X * dSpeed));
+			_body.Y += (int) (moveDirection.Y * (_facingDirection.Y * dSpeed));
 			_collisionBox.X = _body.X;
 			_collisionBox.Y = _body.Y + _height - _collisionBoxHeight;
 		}
@@ -90,7 +88,7 @@ public class Player : Actor {
 
 	protected void ProcessMovement(Vector2 direction, Wall[] walls) {
 		if (_dashing) {
-			Dash(_facingDirection, walls);
+			Dash(walls);
 		}
 		else {
 			Vector2 moveDirection = CheckCollisions(direction, walls);

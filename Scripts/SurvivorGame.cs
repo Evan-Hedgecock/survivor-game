@@ -146,7 +146,7 @@ public class SurvivorGame : Game {
 	private void DashInput() {
         if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
 			if (_player.GetDash()) {
-				_player.Dash(_inputAxis, _obstacles);
+				_player.Dash(_obstacles);
 				_dashCooldownTimer.Start();
 				_dashDurationTimer.Start();
 			}
