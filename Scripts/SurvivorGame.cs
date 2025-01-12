@@ -6,19 +6,11 @@ using Microsoft.Xna.Framework.Input;
 using Core.Entities;
 using Core.Objects;
 using Core.Systems;
-using Core.Systems.World;
-using Core.Utils;
 
 namespace Scripts;
 public class SurvivorGame : Game {
-	private bool drawGrid = true;
-
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-
-	private GameGrid _gameGrid;
-
-	private Pathfinder _pathfinder;
 
 	// Input properties
     private Vector2 _inputAxis;
@@ -28,8 +20,6 @@ public class SurvivorGame : Game {
 	private Texture2D _houseTexture;
     private Texture2D _playerTexture;
 	private Texture2D _enemyTexture;
-	private Texture2D _collisionBoxTexture;
-	private Texture2D _gridTexture;
 
 	// Player properties
     private Player _player = new Player(new Vector2(200, 200));
@@ -47,7 +37,6 @@ public class SurvivorGame : Game {
 	private TimerManager _timerManager;
 	private Timer _dashCooldownTimer;
 	private Timer _dashDurationTimer;
-	private Timer _findPathTimer;
 
 	private Camera _camera;
 
@@ -64,36 +53,15 @@ public class SurvivorGame : Game {
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
-		// World height and width should be divisible by 10 for proper
-		// cell generation
-		Rectangle world = new Rectangle(0, 0, 500, 2000);
-
 		_obstacles = new Wall[] {_wall, _wall2, _wall3};
-		_gameGrid = new GameGrid(world);
-		_gameGrid.CreateGrid(_obstacles);
 
-		_pathfinder = new Pathfinder(_gameGrid.Grid);
-		_enemy = new Enemy(_pathfinder);
-
-		_pathfinder.FindTargetCell(_player.CollisionBox);
-		_pathfinder.FindStartCell(_enemy.CollisionBox);
-		List<Vector2> originalPath = _pathfinder.FindPath();
-		foreach (GridCell cell in _gameGrid.Grid) {
-			foreach (Vector2 waypoint in originalPath) {
-				if (cell.Cell.Contains(waypoint)) {
-					cell.Colour = Color.Green;
-				}
-			}
-		}
+		_enemy = new Enemy();
 
 		// Create timers and store in timerManager
 		_dashCooldownTimer = _player.DashCooldownTimer();
 		_dashDurationTimer = _player.DashDurationTimer();
-		_findPathTimer = _enemy.FindPathTimer();
-		_findPathTimer.Start();
-		Timer[] timers = {_dashCooldownTimer, _dashDurationTimer, _findPathTimer};
+		Timer[] timers = {_dashCooldownTimer, _dashDurationTimer};
 		_timerManager = new TimerManager(timers);
-
 
         _inputAxis = new Vector2(0, 0);
 
@@ -108,7 +76,6 @@ public class SurvivorGame : Game {
 		_houseTexture = Content.Load<Texture2D>("house");
 		_wallTexture = Content.Load<Texture2D>("rectangle");
 		_enemyTexture = Content.Load<Texture2D>("player");
-		_gridTexture = Content.Load<Texture2D>("player");
 
 		// Create Textures
 		_player.Texture = _playerTexture;
@@ -116,10 +83,6 @@ public class SurvivorGame : Game {
 		_wall.CreateTexture(_wallTexture);
 		_wall2.CreateTexture(_wallTexture);
 		_wall3.CreateTexture(_wallTexture);
-
-		foreach (GridCell cell in _gameGrid.Grid) {
-			cell.Texture = _gridTexture;
-		}
     }
 
     protected override void Update(GameTime gameTime) {
@@ -135,7 +98,7 @@ public class SurvivorGame : Game {
 		DashInput();
 
         _player.Update(_inputAxis, _obstacles);
-		_enemy.Update(_player, _findPathTimer);
+		_enemy.Update(_player);
 
 		_camera.Update(new Vector2(_player.Body.X, _player.Body.Y), GraphicsDevice);
 
@@ -146,18 +109,10 @@ public class SurvivorGame : Game {
         //DisplayFrames(gameTime);
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin(transformMatrix: _camera.CreateMatrix(GraphicsDevice));
-		if (drawGrid) {
-			for (int i = 0; i < _gameGrid.Grid.GetLength(0); i++) {
-				for (int j = 0; j < _gameGrid.Grid.GetLength(1); j++) {
-					_gameGrid.Grid[i, j].Draw(_spriteBatch, i + j);
-				}
-			}
-		}
 		DrawObstacles(_spriteBatch);
         _player.Draw(_spriteBatch);
 		_enemy.Draw(_spriteBatch);
         _spriteBatch.End();
-
         base.Draw(gameTime);
     }
 

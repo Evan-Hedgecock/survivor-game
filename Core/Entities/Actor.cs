@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Core.Objects;
-using Core.Utils;
 
 namespace Core.Entities;
 public abstract class Actor {
@@ -31,14 +30,6 @@ public abstract class Actor {
 	protected int _collisionBoxHeight;
 
 	protected Vector2 _facingDirection;
-
-	protected List<Vector2> _path;
-
-	public Pathfinder Pfinder {
-		protected get { return _pathfinder; }
-		set { _pathfinder = value; }
-	}
-	protected Pathfinder _pathfinder;
 
 	// Movement Values
 	public virtual int Speed { 
