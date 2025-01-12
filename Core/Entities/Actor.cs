@@ -39,34 +39,16 @@ public abstract class Actor {
 	protected int _speed;
 
 	protected Vector2 CheckCollisions(Vector2 direction, Wall[] walls) {
-		Vector2 moveDirection = new Vector2(1, 1);
-		Rectangle xCollision = new Rectangle(
-			_collisionBox.X + (int) (direction.X * _speed),
-			_collisionBox.Y,
-			_collisionBox.Width,
-			_collisionBox.Height);
-		Rectangle yCollision = new Rectangle(
-			_collisionBox.X,
-			_collisionBox.Y + (int) (direction.Y * _speed),
-			_collisionBox.Width,
-			_collisionBox.Height);
-
-		foreach (Wall wall in walls) {
-			if (wall.CollisionShape.Intersects(xCollision)) {
-				moveDirection.X = 0;
-			}
-			if (wall.CollisionShape.Intersects(yCollision)) {
-				moveDirection.Y = 0;
-			}
-			if (moveDirection.X == 0 && moveDirection.Y == 0) {
-				break;
-			}
-		}
-		return moveDirection;
+		Rectangle[] collisionBoxes = EstimateCollisionBox(direction, _speed);
+		return CalculateMoveDirection(walls, collisionBoxes);
 	}
 
 	protected Vector2 CheckCollisions(Vector2 direction, Wall[] walls, float speed) {
-		Vector2 moveDirection = new Vector2(1, 1);
+		Rectangle[] collisionBoxes = EstimateCollisionBox(direction, speed);
+		return CalculateMoveDirection(walls, collisionBoxes);
+	}
+
+	protected Rectangle[] EstimateCollisionBox(Vector2 direction, float speed) {
 		Rectangle xCollision = new Rectangle(
 			_collisionBox.X + (int) (direction.X * speed),
 			_collisionBox.Y,
@@ -77,16 +59,20 @@ public abstract class Actor {
 			_collisionBox.Y + (int) (direction.Y * speed),
 			_collisionBox.Width,
 			_collisionBox.Height);
+		return new Rectangle[] {xCollision, yCollision};
+	}
 
+	protected Vector2 CalculateMoveDirection(Wall[] walls, Rectangle[] collisionBoxes) {
+		Vector2 moveDirection = new Vector2(1, 1);
 		foreach (Wall wall in walls) {
-			if (wall.CollisionShape.Intersects(xCollision)) {
+			if (wall.CollisionShape.Intersects(collisionBoxes[0])) {
 				moveDirection.X = 0;
 			} 
-			if (wall.CollisionShape.Intersects(yCollision)) {
+			if (wall.CollisionShape.Intersects(collisionBoxes[1])) {
 				moveDirection.Y = 0;
 			}
 			if (moveDirection.X == 0 && moveDirection.Y == 0) {
-				break;
+				return moveDirection;
 			}
 		}
 		return moveDirection;
