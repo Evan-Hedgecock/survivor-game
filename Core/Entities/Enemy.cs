@@ -10,8 +10,8 @@ public class Enemy : Actor {
 	protected Player _player;
 
 	public Enemy() {
-		_collisionBoxHeight = 8;
 		_height = 40;
+		_collisionBoxHeight = _height / 5;
 		_width = 30;
 		Body = new Rectangle(200, 1000, _width, _height);
 		CollisionBox = new Rectangle(_body.X,

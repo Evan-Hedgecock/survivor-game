@@ -12,6 +12,10 @@ public class SurvivorGame : Game {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
+	// Grid and path nodes
+	private GameGrid _gameGrid;
+	private Node[,] _nodeGrid;
+
 	// Input properties
     private Vector2 _inputAxis;
 
@@ -22,7 +26,7 @@ public class SurvivorGame : Game {
 	private Texture2D _enemyTexture;
 
 	// Player properties
-    private Player _player = new Player(new Vector2(200, 200));
+    private Player _player = new Player(new Vector2(-495, 973));
 
 	// Enemy properties
 	private Enemy _enemy;
@@ -55,6 +59,13 @@ public class SurvivorGame : Game {
 
 		_obstacles = new Wall[] {_wall, _wall2, _wall3};
 
+		// Initialize game grid
+		int worldHeight = 2000;
+		int worldWidth = 1000;
+		_gameGrid = new GameGrid(worldHeight, worldWidth);
+		_nodeGrid = _gameGrid.NodeGrid;
+		_gameGrid.WorldPosToNode(_player.Position);
+
 		_enemy = new Enemy();
 
 		// Create timers and store in timerManager
@@ -76,6 +87,10 @@ public class SurvivorGame : Game {
 		_houseTexture = Content.Load<Texture2D>("house");
 		_wallTexture = Content.Load<Texture2D>("rectangle");
 		_enemyTexture = Content.Load<Texture2D>("player");
+
+		foreach (Node node in _nodeGrid) {
+			node.Texture = _playerTexture;
+		}
 
 		// Create Textures
 		_player.Texture = _playerTexture;
@@ -109,6 +124,9 @@ public class SurvivorGame : Game {
         //DisplayFrames(gameTime);
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin(transformMatrix: _camera.CreateMatrix(GraphicsDevice));
+		foreach (Node node in _nodeGrid) {
+			node.Draw(_spriteBatch);
+		}
 		DrawObstacles(_spriteBatch);
         _player.Draw(_spriteBatch);
 		_enemy.Draw(_spriteBatch);

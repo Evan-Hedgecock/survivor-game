@@ -19,6 +19,12 @@ public abstract class Actor {
 	}
 	protected Rectangle _body;
 
+	public Vector2 Position {
+		get {
+			return new Vector2(_body.X, _body.Y);
+		}
+	}
+
 	protected int _height;
 	protected int _width;
 
