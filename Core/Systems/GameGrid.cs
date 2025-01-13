@@ -85,6 +85,7 @@ public class Node {
 			return gCost + hCost;
 		}
 	}
+	public Node Parent { get; set; }
 
 	public bool Blocked { get; set; }
 
@@ -122,6 +123,10 @@ public class Node {
 		} else {
 			spriteBatch.Draw(Texture, Cell, Color.Black);
 		}
+	}
+
+	public void Draw(SpriteBatch spriteBatch, Color color) {
+		spriteBatch.Draw(Texture, Cell, color);
 	}
 }
 	

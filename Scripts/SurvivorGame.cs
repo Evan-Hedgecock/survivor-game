@@ -16,6 +16,10 @@ public class SurvivorGame : Game {
 	private GameGrid _gameGrid;
 	private Node[,] _nodeGrid;
 
+	private Pathfinder _pathfinder;
+
+	private List<Vector2> _path;
+
 	// Input properties
     private Vector2 _inputAxis;
 
@@ -52,9 +56,9 @@ public class SurvivorGame : Game {
     }
 
     protected override void Initialize() {
-        _graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width / 2;
-		_graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height / 2;
-        _graphics.IsFullScreen = false;
+        _graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
+		_graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
+        _graphics.IsFullScreen = true;
         _graphics.ApplyChanges();
 
 		_walls = new Wall[] {_wall, _wall2, _wall3};
@@ -73,6 +77,9 @@ public class SurvivorGame : Game {
 		}
 
 		_enemy = new Enemy();
+
+		_pathfinder = new Pathfinder(_gameGrid);
+
 
 		// Create timers and store in timerManager
 		_dashCooldownTimer = _player.DashCooldownTimer();
@@ -120,7 +127,9 @@ public class SurvivorGame : Game {
 
         _player.Update(_inputAxis, _walls);
 		_enemy.Update(_player);
-
+		Node start = _gameGrid.WorldPosToNode(_enemy.Position);
+		Node target = _gameGrid.WorldPosToNode(new Vector2(_player.CollisionBox.X, _player.CollisionBox.Y));
+		_path = _pathfinder.FindPath(start, target);
 		_camera.Update(new Vector2(_player.Body.X, _player.Body.Y), GraphicsDevice);
 
         base.Update(gameTime);
@@ -132,6 +141,9 @@ public class SurvivorGame : Game {
         _spriteBatch.Begin(transformMatrix: _camera.CreateMatrix(GraphicsDevice));
 		foreach (Node node in _nodeGrid) {
 			node.Draw(_spriteBatch);
+		}
+		foreach (Vector2 position in _path) {
+			_gameGrid.WorldPosToNode(position).Draw(_spriteBatch, Color.Green);
 		}
 		DrawWalls(_spriteBatch);
         _player.Draw(_spriteBatch);
