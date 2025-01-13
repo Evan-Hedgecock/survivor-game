@@ -35,7 +35,7 @@ public class SurvivorGame : Game {
 	private Wall _wall = new Wall(new Vector2(100, 400), 200, 10);
 	private Wall _wall2 = new Wall(new Vector2(300, 400), 10, 200);
 	private Wall _wall3 = new Wall(new Vector2(100, 400), 10, 200);
-	private Wall[] _obstacles;
+	private Wall[] _walls;
 
 	// Timers
 	private TimerManager _timerManager;
@@ -57,7 +57,7 @@ public class SurvivorGame : Game {
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
-		_obstacles = new Wall[] {_wall, _wall2, _wall3};
+		_walls = new Wall[] {_wall, _wall2, _wall3};
 
 		// Initialize game grid
 		int worldHeight = 2000;
@@ -65,6 +65,12 @@ public class SurvivorGame : Game {
 		_gameGrid = new GameGrid(worldHeight, worldWidth);
 		_nodeGrid = _gameGrid.NodeGrid;
 		_gameGrid.WorldPosToNode(_player.Position);
+		List<Node> wallNodes = new List<Node>();
+		foreach (Wall wall in _walls) {
+			foreach(Node node in _gameGrid.WorldRectToNodes(wall.CollisionShape)) {
+				node.Blocked = true;
+			}
+		}
 
 		_enemy = new Enemy();
 
@@ -112,7 +118,7 @@ public class SurvivorGame : Game {
 		MoveInput();
 		DashInput();
 
-        _player.Update(_inputAxis, _obstacles);
+        _player.Update(_inputAxis, _walls);
 		_enemy.Update(_player);
 
 		_camera.Update(new Vector2(_player.Body.X, _player.Body.Y), GraphicsDevice);
@@ -127,7 +133,7 @@ public class SurvivorGame : Game {
 		foreach (Node node in _nodeGrid) {
 			node.Draw(_spriteBatch);
 		}
-		DrawObstacles(_spriteBatch);
+		DrawWalls(_spriteBatch);
         _player.Draw(_spriteBatch);
 		_enemy.Draw(_spriteBatch);
         _spriteBatch.End();
@@ -164,16 +170,16 @@ public class SurvivorGame : Game {
 	private void DashInput() {
         if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
 			if (_player.GetDash()) {
-				_player.Dash(_obstacles);
+				_player.Dash(_walls);
 				_dashCooldownTimer.Start();
 				_dashDurationTimer.Start();
 			}
 		}
 	}
 
-	private void DrawObstacles(SpriteBatch spriteBatch) {
-		foreach (Wall obstacle in _obstacles) {
-			obstacle.Draw(spriteBatch);
+	private void DrawWalls(SpriteBatch spriteBatch) {
+		foreach (Wall wall in _walls) {
+			wall.Draw(spriteBatch);
 		}
 	}
 }

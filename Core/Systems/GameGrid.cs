@@ -27,8 +27,6 @@ public class GameGrid {
 	private Node[,] CreateGrid(int nodeSize) {
 		int rowCount = Height / nodeSize;
 		int colCount = Width / nodeSize;
-		Console.WriteLine(rowCount);
-		Console.WriteLine(colCount);
 		Node[,] grid = new Node[rowCount, colCount];
 
 		for (int row = 0; row < rowCount; row++) {
@@ -53,6 +51,30 @@ public class GameGrid {
 								 (int) GridSize.X - 1); 
 		return NodeGrid[GridRow, GridCol];
 	}
+
+	public Node[] WorldRectToNodes(Rectangle worldRect) {
+		// Calculate starting node in top left corner
+		// And end node in bottom right corner
+		Node topLeft = WorldPosToNode(new Vector2(worldRect.X, worldRect.Y));
+		Node bottomRight = WorldPosToNode(new Vector2(worldRect.Right, worldRect.Bottom));
+		int startRow = topLeft.Row;
+		int startCol = topLeft.Col;
+		int endRow = bottomRight.Row;
+		int endCol = bottomRight.Col;
+		Node[] nodes = new Node[(endRow - startRow + 1) *
+								(endCol - startCol + 1)];
+		string startToEnd = string.Format("Start row, col: [{0}, {1}]\n" +
+										  "End row, col: [{2}, {3}]\n",
+										  startRow, startCol,
+										  endRow, endCol);
+		// Add all nodes in between start and end to nodes[]
+		for (int row = 0; row < (endRow - startRow + 1); row++) {
+			for (int col = 0; col < (endCol - startCol + 1); col++) {
+				nodes[row + col] = NodeGrid[row + startRow, col + startCol];
+			}
+		}
+		return nodes;
+	}
 }
 
 public class Node {
@@ -63,6 +85,8 @@ public class Node {
 			return gCost + hCost;
 		}
 	}
+
+	public bool Blocked { get; set; }
 
 	public int Size { get; set; }
 	public int Row { get; set; }
@@ -78,6 +102,8 @@ public class Node {
 		Size = size;
 		WorldPosition = worldPos;
 		Cell = new Rectangle((int) WorldPosition.X, (int) WorldPosition.Y, Size, Size);
+		// Initialize blocked to false, this changes in the Initialize() if it contains a wall or other obstacle
+		Blocked = false;
 	}
 
 	public void Draw(SpriteBatch spriteBatch, Node playerPos) {
