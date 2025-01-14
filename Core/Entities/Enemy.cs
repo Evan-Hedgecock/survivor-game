@@ -9,21 +9,37 @@ namespace Core.Entities;
 public class Enemy : Actor {
 	protected Player _player;
 
-	public Enemy() {
+	protected Pathfinder _pathfinder;
+	protected GameGrid _gameGrid;
+
+	protected bool findPath = true;
+	protected List<Vector2> _path;
+
+	public Enemy(Pathfinder pathfinder, GameGrid gameGrid) {
 		_height = 40;
 		_collisionBoxHeight = _height / 5;
 		_width = 30;
-		Body = new Rectangle(200, 1000, _width, _height);
+		Body = new Rectangle(0, 0, _width, _height);
 		CollisionBox = new Rectangle(_body.X,
 									 _body.Y + _height - _collisionBoxHeight,
 									 _body.Width, _body.Height);
 		Speed = 2;
+		_pathfinder = pathfinder;
+		_gameGrid = gameGrid;
 	}
 
 	public void Update(Player player) {
 		_player = player;
 		_collisionBox.X = Body.X;
 		_collisionBox.Y = Body.Y + _height - _collisionBoxHeight;
+		//Console.WriteLine(target.Blocked);
+		//if (findPath) {
+		Node start = _gameGrid.WorldPosToNode(Position);
+		Node target = FindUnblockedTarget(_gameGrid.WorldPosToNode(
+										  new Vector2(_player.CollisionBox.X,
+													  _player.CollisionBox.Y)));
+		//if (findPath) {
+		_path = _pathfinder.FindPath(start, target);
 		ProcessMovement();
 	}
 
@@ -35,20 +51,42 @@ public class Enemy : Actor {
 	}
 
 	protected void ProcessMovement() {
-		Vector2 direction;
-		direction = new Vector2(0, 0);
-  		if (direction.X > 0) {
-  			_body.X += Speed;
-  		}
-  		else if (direction.X < 0) {
-  			_body.X -= Speed;
-  		}
-  
-  		if (direction.Y > 0) {
-  			_body.Y += Speed;
-  		}
-  		else if (direction.Y < 0) {
-  			_body.Y -= Speed;
- 		}
+		try {
+			if (Position == _path[0]) {
+				_path.Remove(Position);
+			}
+			Vector2 direction = Vector2.Subtract(_path[0], Position);
+			if (direction.X < 0) {
+				_body.X -= Speed;
+			} else if (direction.X > 0) {
+				_body.X += Speed;
+			}
+			if (direction.Y < 0) {
+				_body.Y -= Speed;
+			} else if (direction.Y > 0) {
+				_body.Y += Speed;
+			}
+			//_body.X += (int) direction.X * Speed;
+			//_body.Y += (int) direction.Y * Speed;
+		} catch (Exception) {}
+	}
+
+	protected Node FindUnblockedTarget(Node target) {
+		while (target.Blocked) {
+			int increment = 1;
+			if (target.Blocked) {
+				target = _gameGrid.NodeGrid[target.Row, target.Col + increment];
+			}
+			if (target.Blocked) {
+				target = _gameGrid.NodeGrid[target.Row + increment, target.Col];
+			}
+			if (target.Blocked) {
+				target = _gameGrid.NodeGrid[target.Row + increment,
+					   						target.Col + increment];
+			}
+			increment++;
+			Console.WriteLine("No unblocked targets were found");
+		}
+		return target;
 	}
 }

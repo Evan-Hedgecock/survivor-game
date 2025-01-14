@@ -14,6 +14,8 @@ public class Pathfinder {
 	}
 
 	public List<Vector2> FindPath(Node start, Node target) {
+		//Console.WriteLine(start.WorldPosition);
+		//Console.WriteLine(target.WorldPosition);
 		List<Node> openList = new List<Node>();
 		List<Node> closedList = new List<Node>();
 
@@ -34,8 +36,12 @@ public class Pathfinder {
 					// Add neighbor to openList
 
 		Node current = start;
+		//Console.Write("Start node position: ");
+		//Console.WriteLine(start.WorldPosition);
 		openList.Add(current);
 		while (openList.Count > 0) {
+			//Console.WriteLine("Finding path");
+			//Console.WriteLine(openList.Count);
 			current = openList[0];
 			foreach (Node node in openList) {
 				if (node.fCost < current.fCost || 
@@ -47,15 +53,16 @@ public class Pathfinder {
 
 			if (current == target) {
 				List<Vector2> waypoints = new List<Vector2>();
-				while (true) {
-					try {
-						waypoints.Add(current.Parent.WorldPosition);
-						current = current.Parent;
-					} catch (Exception) {
-						break;
-					}
+					//Console.WriteLine("Add waypoints");
+				while (current != start) {
+					//Console.WriteLine(current.WorldPosition);
+					waypoints.Add(current.WorldPosition);
+					current = current.Parent;
 				}
+				//Console.WriteLine(current.WorldPosition);
+				waypoints.Add(current.WorldPosition);
 				waypoints.Reverse();
+				waypoints.RemoveAt(0);
 				return waypoints;
 			}
 
@@ -91,6 +98,7 @@ public class Pathfinder {
 				}
 			}
 		}
+		Console.WriteLine("Uh oh, the target was not found...");
 		return new List<Vector2>();
 	}
 

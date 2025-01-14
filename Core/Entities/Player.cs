@@ -60,7 +60,6 @@ public class Player : Actor {
 			float dSpeed = (_facingDirection.X != 0 && _facingDirection.Y != 0) ?
 						   (float) (_dashSpeed / 1.5) : _dashSpeed;
 			Vector2 moveDirection = CheckCollisions(_facingDirection, walls, dSpeed);
-			Console.WriteLine(moveDirection);
 			_body.X += (int) (moveDirection.X * (_facingDirection.X * dSpeed));
 			_body.Y += (int) (moveDirection.Y * (_facingDirection.Y * dSpeed));
 			_collisionBox.X = _body.X;
