@@ -33,7 +33,7 @@ public class GameGrid {
 			for (int col = 0; col < colCount; col++) {
 				float xPos = Area.X + (nodeSize * col);
 				float yPos = Area.Y + (nodeSize * row);
-				Vector2 worldPos = new Vector2(xPos, yPos);
+				Vector2 worldPos = new(xPos, yPos);
 				grid[row, col] = new Node(row, col, nodeSize, worldPos);
 			}
 		}
@@ -78,11 +78,11 @@ public class GameGrid {
 }
 
 public class Node {
-	public int gCost { get; set; }
-	public int hCost { get; set; }
-	public int fCost {
+	public int GCost { get; set; }
+	public int HCost { get; set; }
+	public int FCost {
 		get {
-			return gCost + hCost;
+			return GCost + HCost;
 		}
 	}
 	public Node Parent { get; set; }

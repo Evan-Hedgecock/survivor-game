@@ -8,17 +8,17 @@ using Core.Systems;
 namespace Core.Entities;
 public class Player : Actor {
 	// Movement values
-	private int _dashSpeed = 15;
+	private readonly int _dashSpeed = 15;
 
 	// Ability bools
 	private bool _canDash = true;
 	private bool _dashing = false;
 
 	// Durations
-	private float _dashDuration = 0.1f;
+	private readonly float _dashDuration = 0.1f;
 
 	// Cooldowns
-	private float _dashCooldown = 0.75f;
+	private readonly float _dashCooldown = 0.75f;
 
 	public Player(Vector2 position) {
 		_height = 40;
@@ -70,19 +70,19 @@ public class Player : Actor {
 	// Timer Functions
 	public Timer DashCooldownTimer() {
 		Action cb = DashReady;
-		Timer timer = new Timer(_dashCooldown, cb);
+		Timer timer = new(_dashCooldown, cb);
 		return timer;
 	}
 
 	public Timer DashDurationTimer() {
 		Action cb = DashComplete;
-		Timer timer = new Timer(_dashDuration, cb);
+		Timer timer = new(_dashDuration, cb);
 		return timer;
 	}
 
 	// Getters
 	public bool GetDash() {
-		return (_canDash || _dashing);
+		return _canDash || _dashing;
 	}
 
 	protected void ProcessMovement(Vector2 direction, Wall[] walls) {

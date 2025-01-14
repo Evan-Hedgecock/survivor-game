@@ -9,7 +9,7 @@ using Core.Systems;
 
 namespace Scripts;
 public class SurvivorGame : Game {
-    private GraphicsDeviceManager _graphics;
+    private readonly GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
 	// Grid and path nodes
@@ -23,20 +23,19 @@ public class SurvivorGame : Game {
 
 	// Textures
 	private Texture2D _wallTexture;
-	private Texture2D _houseTexture;
     private Texture2D _playerTexture;
 	private Texture2D _enemyTexture;
 
 	// Player properties
-    private Player _player = new Player(new Vector2(-495, 973));
+    private readonly Player _player = new(new Vector2(-495, 973));
 
 	// Enemy properties
 	private Enemy _enemy;
 
 	// Obstacles
-	private Wall _wall = new Wall(new Vector2(100, 400), 200, 10);
-	private Wall _wall2 = new Wall(new Vector2(300, 400), 10, 200);
-	private Wall _wall3 = new Wall(new Vector2(100, 400), 10, 200);
+	private readonly Wall _wall = new(new Vector2(100, 400), 200, 10);
+	private readonly Wall _wall2 = new(new Vector2(300, 400), 10, 200);
+	private readonly Wall _wall3 = new(new Vector2(100, 400), 10, 200);
 	private Wall[] _walls;
 
 	// Timers
@@ -44,7 +43,7 @@ public class SurvivorGame : Game {
 	private Timer _dashCooldownTimer;
 	private Timer _dashDurationTimer;
 
-	private Camera _camera;
+	private readonly Camera _camera;
 
     public SurvivorGame() {
         _graphics = new GraphicsDeviceManager(this);
@@ -59,7 +58,7 @@ public class SurvivorGame : Game {
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
-		_walls = new Wall[] {_wall, _wall2, _wall3};
+		_walls = [_wall, _wall2, _wall3];
 
 		// Initialize game grid
 		int worldHeight = 2000;
@@ -67,7 +66,6 @@ public class SurvivorGame : Game {
 		_gameGrid = new GameGrid(worldHeight, worldWidth);
 		_nodeGrid = _gameGrid.NodeGrid;
 		_gameGrid.WorldPosToNode(_player.Position);
-		List<Node> wallNodes = new List<Node>();
 		foreach (Wall wall in _walls) {
 			foreach(Node node in _gameGrid.WorldRectToNodes(wall.CollisionShape)) {
 				try {
@@ -83,7 +81,7 @@ public class SurvivorGame : Game {
 		// Create timers and store in timerManager
 		_dashCooldownTimer = _player.DashCooldownTimer();
 		_dashDurationTimer = _player.DashDurationTimer();
-		Timer[] timers = {_dashCooldownTimer, _dashDurationTimer};
+		Timer[] timers = [_dashCooldownTimer, _dashDurationTimer];
 		_timerManager = new TimerManager(timers);
 
         _inputAxis = new Vector2(0, 0);
@@ -145,17 +143,17 @@ public class SurvivorGame : Game {
         base.Draw(gameTime);
     }
 
-    private void DisplayFrames(GameTime gameTime) {
+    private static void DisplayFrames(GameTime gameTime) {
         float frameRate = 1 / (float)gameTime.ElapsedGameTime.TotalSeconds;
         Console.Write("Frames: ");
         Console.WriteLine(frameRate);
     }
 
 	private void MoveInput() {
-		bool up = (Keyboard.GetState().IsKeyDown(Keys.W)) ? true : false;
-        bool down = (Keyboard.GetState().IsKeyDown(Keys.S)) ? true : false;
-        bool left = (Keyboard.GetState().IsKeyDown(Keys.A)) ? true : false;
-        bool right = (Keyboard.GetState().IsKeyDown(Keys.D)) ? true : false;
+		bool up = Keyboard.GetState().IsKeyDown(Keys.W);
+        bool down = Keyboard.GetState().IsKeyDown(Keys.S);
+        bool left = Keyboard.GetState().IsKeyDown(Keys.A);
+        bool right = Keyboard.GetState().IsKeyDown(Keys.D);
 
         if ((up || down) && !(up && down)) {
             _inputAxis.Y = Keyboard.GetState().IsKeyDown(Keys.S) ? 1 : -1;

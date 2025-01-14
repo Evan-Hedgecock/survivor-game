@@ -66,11 +66,11 @@ public abstract class Actor {
 			_collisionBox.Y + (int) (direction.Y * speed),
 			_collisionBox.Width,
 			_collisionBox.Height);
-		return new Rectangle[] {xCollision, yCollision};
+		return [xCollision, yCollision];
 	}
 
-	protected Vector2 CalculateMoveDirection(Wall[] walls, Rectangle[] collisionBoxes) {
-		Vector2 moveDirection = new Vector2(1, 1);
+	protected static Vector2 CalculateMoveDirection(Wall[] walls, Rectangle[] collisionBoxes) {
+		Vector2 moveDirection = new(1, 1);
 		foreach (Wall wall in walls) {
 			if (wall.CollisionShape.Intersects(collisionBoxes[0])) {
 				moveDirection.X = 0;
