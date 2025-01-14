@@ -94,7 +94,6 @@ public class SurvivorGame : Game {
 
 		// Load Textures
         _playerTexture = Content.Load<Texture2D>("player");
-		_houseTexture = Content.Load<Texture2D>("house");
 		_wallTexture = Content.Load<Texture2D>("rectangle");
 		_enemyTexture = Content.Load<Texture2D>("player");
 

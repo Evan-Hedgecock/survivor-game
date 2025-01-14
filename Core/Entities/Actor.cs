@@ -56,7 +56,7 @@ public abstract class Actor {
 	}
 
 	protected Rectangle[] EstimateCollisionBox(Vector2 direction, float speed) {
-		Rectangle xCollision = new Rectangle(
+		Rectangle xCollision = new(
 			_collisionBox.X + (int) (direction.X * speed),
 			_collisionBox.Y,
 			_collisionBox.Width,
