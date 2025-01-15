@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Core.Character;
 using Core.Objects;
 using Core.Systems;
 using Core.Physics;
@@ -31,7 +32,7 @@ public class SurvivorGame : Game {
 	private Texture2D _enemyTexture;
 
 	// Player properties
-    //private readonly Player _player = new(new Vector2(-495, 973));
+    private readonly Player _player = new(new Rectangle(0, 0, 20, 40));
 
 	// Enemy properties
 
@@ -54,8 +55,8 @@ public class SurvivorGame : Game {
 
     public SurvivorGame() {
         _graphics = new GraphicsDeviceManager(this);
-		//_camera = new Camera(new Vector2 (_player.Body.X, _player.Body.Y));
-		_camera = new Camera(new Vector2(_wall.Position.X, _wall.Position.Y - 0));
+		_camera = new Camera(new Vector2 (_player.PositionX, _player.PositionY));
+		//_camera = new Camera(new Vector2(_wall.Position.X, _wall.Position.Y - 0));
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
@@ -76,6 +77,7 @@ public class SurvivorGame : Game {
 		// Set nodes Blocked to true where a wall or other collider is
 
 		_collisionManager.Initialize();
+		_player.Initialize();
 
 		_pathfinder = new Pathfinder(_gameGrid);
 		//_enemy = new Enemy(_pathfinder, _gameGrid);
@@ -104,7 +106,7 @@ public class SurvivorGame : Game {
 		}
 
 		// Create Textures
-		//_player.Texture = _playerTexture;
+		_player.Texture = _playerTexture;
 		//_enemy.Texture = _enemyTexture;
 		_wall.Texture = _wallTexture;
 		_wall2.Texture = _wallTexture;
@@ -117,17 +119,18 @@ public class SurvivorGame : Game {
 			Keyboard.GetState().IsKeyDown(Keys.Escape)) {
             Exit();
 		}
-
+		Console.WriteLine(CollisionManager.IsColliding(_wall3));
 		//_collisionManager.Update();
 		// Update timerManager timers
 		//_timerManager.Update(gameTime);
 
 		MoveInput();
+		Console.WriteLine(_inputAxis);
 		//DashInput();
 
-        //_player.Update(_inputAxis, _walls);
+        _player.Update(_inputAxis, gameTime);
 		//_enemy.Update(_player);
-		//_camera.Update(new Vector2(_player.Body.X, _player.Body.Y), GraphicsDevice);
+		_camera.Update(new Vector2(_player.PositionX, _player.PositionY), GraphicsDevice);
 
         base.Update(gameTime);
     }
@@ -136,12 +139,12 @@ public class SurvivorGame : Game {
         //DisplayFrames(gameTime);
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin(transformMatrix: _camera.CreateMatrix(GraphicsDevice));
-        //_player.Draw(_spriteBatch);
 		//_enemy.Draw(_spriteBatch);
 		foreach (Node node in _nodeGrid) {
 			node.Draw(_spriteBatch);
 		}
 		DrawWalls(_spriteBatch);
+        _player.Draw(_spriteBatch);
         _spriteBatch.End();
         base.Draw(gameTime);
     }

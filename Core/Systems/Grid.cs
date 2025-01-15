@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -54,20 +55,14 @@ public class Grid {
 										 "Percent: X{1}% Y{2}%\n" +
 										 "GridPos: [{3}, {4}]\n",
 										 worldPos, percentX, percentY, GridRow, GridCol);
-		Console.WriteLine(posToNode);
+		//Console.WriteLine(posToNode);
 		return NodeGrid[GridRow, GridCol];
 	}
 
 	public Node[] WorldRectToNodes(Rectangle worldRect) {
 		// Calculate starting node in top left corner
 		// And end node in bottom right corner
-		string TL = string.Format("Rect: {0}\n" +
-								  "Top left:\n", worldRect);
-		Console.WriteLine(TL);
 		Node topLeft = WorldPosToNode(new Vector2(worldRect.X, worldRect.Y));
-		string BR = string.Format("Rect: {0}\n" +
-								  "bottom right:\n", worldRect);
-		Console.WriteLine(BR);
 		Node bottomRight = WorldPosToNode(new Vector2(worldRect.Right, worldRect.Bottom));
 		int startRow = topLeft.Row;
 		int startCol = topLeft.Col;
@@ -75,26 +70,15 @@ public class Grid {
 		int endCol = bottomRight.Col;
 		Node[] nodes = new Node[(endRow - startRow + 1) *
 								(endCol - startCol + 1)];
-		string startToEnd = string.Format("Start row, col: [{0}, {1}]\n" +
-										  "End row, col: [{2}, {3}]\n",
-										  startRow, startCol,
-										  endRow, endCol);
-		Console.WriteLine(startToEnd);
-		// When Start = [3, 0] and End = [4, 1]
-		// [3, 0], [4, 0], and [4, 1] are added, [3, 1] is skipped
-		// Add all nodes in between start and end to nodes[]
 		int nodesIndex = 0;
 		for (int row = 0; row < (endRow - startRow + 1); row++) {
 			for (int col = 0; col < (endCol - startCol + 1); col++) {
-				Console.Write("Row and col being added: [");
-				Console.Write(row + startRow);
-				Console.Write(", ");
-				Console.Write(col + startCol);
-				Console.WriteLine("]");
 				nodes[nodesIndex] = NodeGrid[row + startRow, col + startCol];
 				nodesIndex++;
 			}
 		}
+		string nodesInRect = string.Format("Nodes in {0}:\n{1}", worldRect, nodes.Length);
+		//Console.WriteLine(nodesInRect);
 		return nodes;
 	}
 }
@@ -151,6 +135,3 @@ public class Node {
 		spriteBatch.Draw(Texture, Cell, color);
 	}
 }
-	
-
-
