@@ -8,10 +8,17 @@ namespace Core.Objects;
 public abstract class GameObject
 {
     public Rectangle Bounds {
-        get { return new Rectangle((int)PositionX, (int)PositionY,
-                                   _bounds.Width, _bounds.Height); }
-        set { _bounds = value; } 
-    } 
+        get { return _bounds; }
+        set { _bounds = value; }
+    }
+    public int BoundsX {
+        get { return Bounds.X; }
+        set { _bounds.X = value; }
+    }
+    public int BoundsY {
+        get { return Bounds.Y; }
+        set { _bounds.Y = value; }
+    }
     protected Rectangle _bounds;
     public Vector2 Position { 
         get { return _position; } 
@@ -30,6 +37,14 @@ public abstract class GameObject
         get { return _collisionBox; }
         set { _collisionBox = value; } 
     }
+    public int CollisionBoxX {
+        get { return _collisionBox.X; }
+        set { _collisionBox.X = value; }
+    }
+    public int CollisionBoxY {
+        get { return _collisionBox.Y; }
+        set { _collisionBox.Y = value; }
+    }
     public int CollisionBoxHeight {
         set { _collisionBox.Height = value; }
     }
@@ -44,6 +59,10 @@ public abstract class GameObject
 
     public GameObject(Rectangle bounds) {
         Bounds = bounds;
+        CollisionBox = new Rectangle(bounds.X, bounds.Y,
+                                      bounds.Width, (int)(bounds.Height * 0.5));
+        Position = new Vector2(bounds.X, bounds.Y);
+        Console.WriteLine(Position);
     }
 
     public virtual void Draw(SpriteBatch spriteBatch) {

@@ -32,7 +32,7 @@ public class SurvivorGame : Game {
 	private Texture2D _enemyTexture;
 
 	// Player properties
-    private readonly Player _player = new(new Rectangle(0, 0, 20, 40));
+    private Player _player;
 
 	// Enemy properties
 
@@ -43,7 +43,6 @@ public class SurvivorGame : Game {
 	private static StaticObject _wall3 = new(new Rectangle(-180, 100, 100, 100));
 	private static StaticObject[] _walls = [_wall, _wall2, _wall3, _wall4];
 		
-	private readonly CollisionManager _collisionManager = new([.. _walls]);
 	
 
 	// Timers
@@ -52,9 +51,12 @@ public class SurvivorGame : Game {
 	private Timer _dashDurationTimer;
 
 	private readonly Camera _camera;
+	private CollisionManager _collisionManager;
 
     public SurvivorGame() {
         _graphics = new GraphicsDeviceManager(this);
+		_collisionManager = new CollisionManager([.. _walls]);
+		_player = new(new Rectangle(-100, -50, 20, 40), _collisionManager);
 		_camera = new Camera(new Vector2 (_player.PositionX, _player.PositionY));
 		//_camera = new Camera(new Vector2(_wall.Position.X, _wall.Position.Y - 0));
         Content.RootDirectory = "Content";
@@ -66,7 +68,6 @@ public class SurvivorGame : Game {
 		_graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height / 2;
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
-
 
 		// Initialize game grid
 		int worldHeight = 500;
@@ -119,7 +120,6 @@ public class SurvivorGame : Game {
 			Keyboard.GetState().IsKeyDown(Keys.Escape)) {
             Exit();
 		}
-		Console.WriteLine(CollisionManager.IsColliding(_wall3));
 		//_collisionManager.Update();
 		// Update timerManager timers
 		//_timerManager.Update(gameTime);

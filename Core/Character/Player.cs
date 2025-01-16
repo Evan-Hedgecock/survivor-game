@@ -1,11 +1,12 @@
 using Microsoft.Xna.Framework;
 using Core.Objects;
 using System;
-using System.ComponentModel;
+using Core.Physics;
 
 namespace Core.Character;
 
-public class Player(Rectangle bounds) : PhysicsObject(bounds) {
+public class Player(Rectangle bounds, CollisionManager collisionManager) :
+             PhysicsObject(bounds, collisionManager) {
 
     public void Initialize() {
         Acceleration = 750;
@@ -15,35 +16,13 @@ public class Player(Rectangle bounds) : PhysicsObject(bounds) {
     }
     
     public void Update(Vector2 inputAxis, GameTime gameTime) {
-        Vector2 oldPos = Position;
-        double deltaTime = gameTime.ElapsedGameTime.TotalSeconds;
-        if (inputAxis.X < 0) {
-            VelocityX = (float)(VelocityX - (Acceleration * deltaTime));
-        } else if (inputAxis.X > 0) {
-            VelocityX = (float)(VelocityX + (Acceleration * deltaTime));
-        } else {
-            if (VelocityX > 0) {
-                VelocityX = (float)Math.Round(VelocityX - (Deceleration * deltaTime));
-            } else if (VelocityX < 0) {
-                VelocityX = (float)Math.Round(VelocityX + (Deceleration * deltaTime));
-            }
-        }
-        if (inputAxis.Y < 0) {
-            VelocityY = (float)(VelocityY - (Acceleration * deltaTime));
-        } else if (inputAxis.Y > 0) {
-            VelocityY = (float)(VelocityY + (Acceleration * deltaTime));
-        } else {
-            if (VelocityY > 0) {
-                VelocityY = (float)Math.Round(VelocityY - (Deceleration * deltaTime));
-            } else if (VelocityY < 0) {
-                VelocityY = (float)Math.Round(VelocityY + (Deceleration * deltaTime));
-            }
-        }
-        PositionX += (float)(VelocityX * deltaTime);
-        PositionY += (float)(VelocityY * deltaTime);
-        string posDiff = string.Format("Old pos: {0}\nNew pos: {1}" + 
-                                       "deltaTime: {2}\nVelocity: {3} Acceleration: {4}",
-                                       oldPos, Position, deltaTime, Velocity, Acceleration);
-        Console.WriteLine(posDiff);
+        MoveAndCollide(inputAxis, gameTime);
+        CollisionBoxX = (int)PositionX;
+        CollisionBoxY = (int)PositionY;
+        BoundsX = (int)PositionX;
+        BoundsY = (int)PositionY;
+        string values = string.Format("Bounds: {0}\nCollisionBox: {1}\n" +
+                                      "Position: {2}\n", Bounds, CollisionBox, Position);
+        Console.WriteLine(values);
     }
 }
