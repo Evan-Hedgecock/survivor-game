@@ -4,9 +4,9 @@ using Microsoft.Xna.Framework;
 using Core.Systems;
 
 namespace Core.Systems;
-public class Pathfinder(GameGrid gameGrid)
+public class Pathfinder(Grid gameGrid)
 {
-	private readonly GameGrid _gameGrid = gameGrid;
+	private readonly Grid _gameGrid = gameGrid;
 	private readonly Node[,] _nodeGrid = gameGrid.NodeGrid;
 
     public List<Vector2> FindPath(Node start, Node target) {

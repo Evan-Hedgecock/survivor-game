@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Core.Entities;
+using Core.Character;
 using Core.Objects;
 using Core.Systems;
+using Core.Physics;
 
 namespace Scripts;
 public class SurvivorGame : Game {
     private readonly GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
+
+	private int _height;
+	private int _width;
+
 	// Grid and path nodes
-	private GameGrid _gameGrid;
+	private Grid _gameGrid;
 	private Node[,] _nodeGrid;
 
 	private Pathfinder _pathfinder;
@@ -27,16 +32,18 @@ public class SurvivorGame : Game {
 	private Texture2D _enemyTexture;
 
 	// Player properties
-    private readonly Player _player = new(new Vector2(-495, 973));
+    private Player _player;
 
 	// Enemy properties
-	private Enemy _enemy;
 
 	// Obstacles
-	private readonly Wall _wall = new(new Vector2(100, 400), 200, 10);
-	private readonly Wall _wall2 = new(new Vector2(300, 400), 10, 200);
-	private readonly Wall _wall3 = new(new Vector2(100, 400), 10, 200);
-	private Wall[] _walls;
+	private static StaticObject _wall = new(new Rectangle(-250, -90, 50, 60));
+	private static StaticObject _wall2 = new(new Rectangle(-50, -10, 210, 50));
+	private static StaticObject _wall4 = new(new Rectangle(-40, 0, 50, 200));
+	private static StaticObject _wall3 = new(new Rectangle(-180, 100, 100, 100));
+	private static StaticObject[] _walls = [_wall, _wall2, _wall3, _wall4];
+		
+	
 
 	// Timers
 	private TimerManager _timerManager;
@@ -44,10 +51,14 @@ public class SurvivorGame : Game {
 	private Timer _dashDurationTimer;
 
 	private readonly Camera _camera;
+	private CollisionManager _collisionManager;
 
     public SurvivorGame() {
         _graphics = new GraphicsDeviceManager(this);
-		_camera = new Camera(new Vector2 (_player.Body.X, _player.Body.Y));
+		_collisionManager = new CollisionManager([.. _walls]);
+		_player = new(new Rectangle(100, -50, 20, 40), _collisionManager);
+		_camera = new Camera(new Vector2 (_player.PositionX, _player.PositionY));
+		//_camera = new Camera(new Vector2(_wall.Position.X, _wall.Position.Y - 0));
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
@@ -58,31 +69,25 @@ public class SurvivorGame : Game {
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
-		_walls = [_wall, _wall2, _wall3];
-
 		// Initialize game grid
-		int worldHeight = 2000;
-		int worldWidth = 1000;
-		_gameGrid = new GameGrid(worldHeight, worldWidth);
+		int worldHeight = 500;
+		int worldWidth = 500;
+		int cellSize = 20;
+		_gameGrid = new Grid(worldHeight, worldWidth, cellSize);
 		_nodeGrid = _gameGrid.NodeGrid;
-		_gameGrid.WorldPosToNode(_player.Position);
-		foreach (Wall wall in _walls) {
-			foreach(Node node in _gameGrid.WorldRectToNodes(wall.CollisionShape)) {
-				try {
-					node.Blocked = true;
-				} catch (Exception) {}
+		// Set nodes Blocked to true where a wall or other collider is
 
-			}
-		}
+		_collisionManager.Initialize();
+		_player.Initialize();
 
 		_pathfinder = new Pathfinder(_gameGrid);
-		_enemy = new Enemy(_pathfinder, _gameGrid);
+		//_enemy = new Enemy(_pathfinder, _gameGrid);
 
 		// Create timers and store in timerManager
-		_dashCooldownTimer = _player.DashCooldownTimer();
-		_dashDurationTimer = _player.DashDurationTimer();
-		Timer[] timers = [_dashCooldownTimer, _dashDurationTimer];
-		_timerManager = new TimerManager(timers);
+		//_dashCooldownTimer = _player.DashCooldownTimer();
+		//_dashDurationTimer = _player.DashDurationTimer();
+		//Timer[] timers = [_dashCooldownTimer, _dashDurationTimer];
+		//_timerManager = new TimerManager(timers);
 
         _inputAxis = new Vector2(0, 0);
 
@@ -103,10 +108,11 @@ public class SurvivorGame : Game {
 
 		// Create Textures
 		_player.Texture = _playerTexture;
-		_enemy.Texture = _enemyTexture;
-		_wall.CreateTexture(_wallTexture);
-		_wall2.CreateTexture(_wallTexture);
-		_wall3.CreateTexture(_wallTexture);
+		//_enemy.Texture = _enemyTexture;
+		_wall.Texture = _wallTexture;
+		_wall2.Texture = _wallTexture;
+		_wall3.Texture = _wallTexture;
+		_wall4.Texture = _wallTexture;
     }
 
     protected override void Update(GameTime gameTime) {
@@ -114,16 +120,17 @@ public class SurvivorGame : Game {
 			Keyboard.GetState().IsKeyDown(Keys.Escape)) {
             Exit();
 		}
-
+		//_collisionManager.Update();
 		// Update timerManager timers
-		_timerManager.Update(gameTime);
+		//_timerManager.Update(gameTime);
 
 		MoveInput();
-		DashInput();
+		Console.WriteLine(_inputAxis);
+		//DashInput();
 
-        _player.Update(_inputAxis, _walls);
-		_enemy.Update(_player);
-		_camera.Update(new Vector2(_player.Body.X, _player.Body.Y), GraphicsDevice);
+        _player.Update(_inputAxis, gameTime);
+		//_enemy.Update(_player);
+		_camera.Update(new Vector2(_player.PositionX, _player.PositionY), GraphicsDevice);
 
         base.Update(gameTime);
     }
@@ -132,12 +139,12 @@ public class SurvivorGame : Game {
         //DisplayFrames(gameTime);
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin(transformMatrix: _camera.CreateMatrix(GraphicsDevice));
+		//_enemy.Draw(_spriteBatch);
 		foreach (Node node in _nodeGrid) {
 			node.Draw(_spriteBatch);
 		}
 		DrawWalls(_spriteBatch);
         _player.Draw(_spriteBatch);
-		_enemy.Draw(_spriteBatch);
         _spriteBatch.End();
         base.Draw(gameTime);
     }
@@ -169,18 +176,18 @@ public class SurvivorGame : Game {
         }
 	}
 
-	private void DashInput() {
-        if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
-			if (_player.GetDash()) {
-				_player.Dash(_walls);
-				_dashCooldownTimer.Start();
-				_dashDurationTimer.Start();
-			}
-		}
-	}
+//	private void DashInput() {
+//        if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
+//			if (_player.GetDash()) {
+//				_player.Dash(_walls);
+//				_dashCooldownTimer.Start();
+//				_dashDurationTimer.Start();
+//			}
+//		}
+//	}
 
 	private void DrawWalls(SpriteBatch spriteBatch) {
-		foreach (Wall wall in _walls) {
+		foreach (StaticObject wall in _walls) {
 			wall.Draw(spriteBatch);
 		}
 	}
