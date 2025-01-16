@@ -44,14 +44,15 @@ public class PhysicsObject : GameObject
         // If there is no collision
             // Move Position by velocity
             // Reset collision box
-        
-        Move(direction, gameTime);
-        Console.Write("This: ");
-        Console.WriteLine(this);
+        CollisionBox = Move(direction, gameTime, CollisionBox);
         if (!_collisionManager.IsColliding(this)) {
             Console.WriteLine("Not colliding");
+            Move(direction, gameTime);
+            // Move(direction, gameTime);
         } else {
-            Console.WriteLine("Colliding");
+            CollisionObject collision = _collisionManager.GetCollision(this);
+            BoundsX -= (int)(collision.PenDepth * collision.Normal.X);
+            BoundsY -= (int)(collision.PenDepth * collision.Normal.Y);
         }
     }
 
@@ -81,13 +82,11 @@ public class PhysicsObject : GameObject
         }
         string movementValues = string.Format("Velocity: {0}\n Position: {1}\ndirection: {2}",
                                               Velocity, Position, direction);
-        Console.WriteLine(movementValues);
         PositionX += (float)(VelocityX * deltaTime);
         PositionY += (float)(VelocityY * deltaTime);
     }
-    public void Move(Vector2 direction, GameTime gameTime, Rectangle body) {
-        string before= string.Format("Body before: {0}", body);
-        Console.WriteLine(before);
+    public Rectangle Move(Vector2 direction, GameTime gameTime, Rectangle oldRect) {
+        string before= string.Format("Body before: {0}", oldRect);
         double deltaTime = gameTime.ElapsedGameTime.TotalSeconds;
         if (direction.X < 0) {
             VelocityX = (float)(VelocityX - (Acceleration * deltaTime));
@@ -95,9 +94,9 @@ public class PhysicsObject : GameObject
             VelocityX = (float)(VelocityX + (Acceleration * deltaTime));
         } else {
             if (VelocityX > 0) {
-                VelocityX = (float)Math.Round(VelocityX - (Deceleration * deltaTime));
+                VelocityX = (float)Math.Clamp(VelocityX - (Deceleration * deltaTime), 0, VelocityX);
             } else if (VelocityX < 0) {
-                VelocityX = (float)Math.Round(VelocityX + (Deceleration * deltaTime));
+                VelocityX = (float)Math.Clamp(VelocityX + (Deceleration * deltaTime), VelocityX, 0);
             }
         }
         if (direction.Y < 0) {
@@ -106,14 +105,16 @@ public class PhysicsObject : GameObject
             VelocityY = (float)(VelocityY + (Acceleration * deltaTime));
         } else {
             if (VelocityY > 0) {
-                VelocityY = (float)Math.Round(VelocityY - (Deceleration * deltaTime));
+                VelocityY = (float)Math.Clamp(VelocityY - (Deceleration * deltaTime), 0, VelocityY);
             } else if (VelocityY < 0) {
-                VelocityY = (float)Math.Round(VelocityY + (Deceleration * deltaTime));
+                VelocityY = (float)Math.Clamp(VelocityY + (Deceleration * deltaTime), VelocityY, 0);
             }
         }
-        body.X += (int)(VelocityX * deltaTime);
-        body.Y += (int)(VelocityY * deltaTime);
-        string after = string.Format("Body after: {0}", body);
-        Console.WriteLine(after);
+        string movementValues = string.Format("Velocity: {0}\n Position: {1}\ndirection: {2}",
+                                              Velocity, Position, direction);
+        Rectangle newRect = new Rectangle((int)(oldRect.X + (VelocityX * deltaTime)),
+                             (int)(oldRect.Y + (VelocityY * deltaTime)),
+                             oldRect.Width, oldRect.Height);
+        return newRect;
     }
 }

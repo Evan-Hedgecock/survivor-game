@@ -5,4 +5,10 @@ namespace Core {
         Foreground = 2,
         UI = 3
     }
+    public enum Side {
+            Right,
+            Bottom,
+            Left,
+            Top
+        }
 }

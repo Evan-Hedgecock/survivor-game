@@ -56,7 +56,7 @@ public class SurvivorGame : Game {
     public SurvivorGame() {
         _graphics = new GraphicsDeviceManager(this);
 		_collisionManager = new CollisionManager([.. _walls]);
-		_player = new(new Rectangle(-100, -50, 20, 40), _collisionManager);
+		_player = new(new Rectangle(100, -50, 20, 40), _collisionManager);
 		_camera = new Camera(new Vector2 (_player.PositionX, _player.PositionY));
 		//_camera = new Camera(new Vector2(_wall.Position.X, _wall.Position.Y - 0));
         Content.RootDirectory = "Content";

@@ -60,9 +60,10 @@ public abstract class GameObject
     public GameObject(Rectangle bounds) {
         Bounds = bounds;
         CollisionBox = new Rectangle(bounds.X, bounds.Y,
-                                      bounds.Width, (int)(bounds.Height * 0.5));
+                                     bounds.Width, bounds.Height);
+        Console.Write("Constructor bounds: ");
+        Console.WriteLine(bounds);
         Position = new Vector2(bounds.X, bounds.Y);
-        Console.WriteLine(Position);
     }
 
     public virtual void Draw(SpriteBatch spriteBatch) {
