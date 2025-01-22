@@ -20,6 +20,8 @@ public class SurvivorGame : Game {
 	private Grid _gameGrid;
 	private Node[,] _nodeGrid;
 
+	private List<Node> pathNodes;
+
 	private Pathfinder _pathfinder;
 
 	// Input properties
@@ -140,6 +142,16 @@ public class SurvivorGame : Game {
 		_enemy.Update(_player, gameTime);
 		_collisionManager.Update();
 
+		Node start = _gameGrid.WorldPosToNode(new Vector2(_enemy.CollisionBoxX,
+														  _enemy.CollisionBoxY));
+		Node target = _gameGrid.WorldPosToNode(new Vector2(_player.CollisionBoxX,
+														  _player.CollisionBoxY));
+		List<Vector2> path = _pathfinder.FindPath(start, target);
+		pathNodes = [];
+		foreach (Vector2 waypoint in path) {
+			pathNodes.Add(_gameGrid.WorldPosToNode(waypoint));
+		}
+
 		// Update Systems
 		_camera.Update(new Vector2(_player.PositionX, _player.PositionY), GraphicsDevice);
 
@@ -151,7 +163,11 @@ public class SurvivorGame : Game {
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin(transformMatrix: _camera.CreateMatrix(GraphicsDevice));
 		foreach (Node node in _nodeGrid) {
-			node.Draw(_spriteBatch);
+			if (pathNodes.Contains(node)) {
+				node.Draw(_spriteBatch, Color.Green);
+			} else {
+				node.Draw(_spriteBatch);
+			}
 		}
         DrawWalls(_spriteBatch);
         _player.Draw(_spriteBatch);

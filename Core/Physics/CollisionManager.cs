@@ -105,7 +105,6 @@ public class CollisionManager(List<GameObject> staticObjects, List<GameObject> d
             // And add the object to a collided list to ensure no object is added twice
             if (obj.CollisionBox.Intersects(collider.CollisionBox) &&
                 obj != collider && !collided.Contains(obj)) {
-                Console.WriteLine("Colliding");
                 collisionList.Add(new(collider, obj));
                 collided.Add(obj);
             }

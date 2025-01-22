@@ -31,7 +31,7 @@ public class Pathfinder(Grid gameGrid)
 				}
 				waypoints.Add(current.WorldPosition);
 				waypoints.Reverse();
-				waypoints.RemoveAt(0);
+				// waypoints.RemoveAt(0);
 				return waypoints;
 			}
 

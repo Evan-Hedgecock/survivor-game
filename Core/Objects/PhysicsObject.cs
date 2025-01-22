@@ -79,10 +79,13 @@ public class PhysicsObject : GameObject
                 VelocityY = (float)Math.Clamp(VelocityY + (Friction * deltaTime), VelocityY, 0);
             }
         }
-        string movementValues = string.Format("Velocity: {0}\n Position: {1}\ndirection: {2}",
-                                              Velocity, Position, direction);
-        BoundsX += (int)(VelocityX * deltaTime);
-        BoundsY += (int)(VelocityY * deltaTime);
+        string movementValues = string.Format("Velocity: {0}\n Position: {1}\ndirection: {2}\nDeltatime: {3}\n" +
+                                              "\nXMovement: {4}\nYMovement: {5}\n",
+                                              Velocity, Position, direction, deltaTime,
+                                              VelocityX * deltaTime, VelocityY * deltaTime);
+        Console.WriteLine(movementValues);
+        BoundsX += (int)Math.Round(VelocityX * deltaTime);
+        BoundsY += (int)Math.Round(VelocityY * deltaTime);
         UpdateCollisionBox();
     }
     protected void InitializeCollisionManager() {
