@@ -1,6 +1,8 @@
 using System;
 using Microsoft.Xna.Framework;
+using Core;
 using Core.Physics;
+
 namespace Core.Objects;
 
 public class PhysicsObject : GameObject
@@ -25,30 +27,23 @@ public class PhysicsObject : GameObject
     protected Vector2 _maxVelocity;
     protected Vector2 _minVelocity;
     public int Acceleration { get; set; }
-    public int Deceleration { get; set; }
+    public int Friction { get; set; }
     public int MaxSpeed { get; set; }
     protected CollisionManager _collisionManager;
 
-    public PhysicsObject(Rectangle bounds, CollisionManager collisionManager) : base(bounds) {
+    public PhysicsObject(Rectangle bounds) : base(bounds) {
         _maxVelocity = new Vector2(MaxSpeed, MaxSpeed);
         _minVelocity = new Vector2(-1 * MaxSpeed, -1 * MaxSpeed);
-        _collisionManager = collisionManager;
+        _collisionManager = Global.Services.GetService(typeof(CollisionManager)) as CollisionManager;
     }
-    //private CollisionManager _collisionManager;
+
+    public void Initialize() {
+
+    }
     public virtual void MoveAndSlide(Vector2 direction, GameTime gameTime) {
-        // Move CollisionBox by velocity
-        // Check collisons
-        // If there is a collision
-            // Get the normal vector2 of the wall that was collided with
-            // Stop movement just before that vector2
-        // If there is no collision
-            // Move Position by velocity
-            // Reset collision box
         Move(direction, gameTime);
-        while (_collisionManager.IsColliding(this)) {
+        if (_collisionManager.IsColliding(this)) {
             var collisions = _collisionManager.GetCollision(this);
-            Console.Write("Number of collisions: ");
-            Console.WriteLine(collisions.Count);
             foreach (CollisionObject collision in collisions)
             {
                 if (collision.PenDepth < 0) {
@@ -69,9 +64,9 @@ public class PhysicsObject : GameObject
             VelocityX = (float)(VelocityX + (Acceleration * deltaTime));
         } else {
             if (VelocityX > 0) {
-                VelocityX = (float)Math.Clamp(VelocityX - (Deceleration * deltaTime), 0, VelocityX);
+                VelocityX = (float)Math.Clamp(VelocityX - (Friction * deltaTime), 0, VelocityX);
             } else if (VelocityX < 0) {
-                VelocityX = (float)Math.Clamp(VelocityX + (Deceleration * deltaTime), VelocityX, 0);
+                VelocityX = (float)Math.Clamp(VelocityX + (Friction * deltaTime), VelocityX, 0);
             }
         }
         if (direction.Y < 0) {
@@ -80,9 +75,9 @@ public class PhysicsObject : GameObject
             VelocityY = (float)(VelocityY + (Acceleration * deltaTime));
         } else {
             if (VelocityY > 0) {
-                VelocityY = (float)Math.Clamp(VelocityY - (Deceleration * deltaTime), 0, VelocityY);
+                VelocityY = (float)Math.Clamp(VelocityY - (Friction * deltaTime), 0, VelocityY);
             } else if (VelocityY < 0) {
-                VelocityY = (float)Math.Clamp(VelocityY + (Deceleration * deltaTime), VelocityY, 0);
+                VelocityY = (float)Math.Clamp(VelocityY + (Friction * deltaTime), VelocityY, 0);
             }
         }
         string movementValues = string.Format("Velocity: {0}\n Position: {1}\ndirection: {2}",
@@ -101,9 +96,9 @@ public class PhysicsObject : GameObject
             VelocityX = (float)(VelocityX + (Acceleration * deltaTime));
         } else {
             if (VelocityX > 0) {
-                VelocityX = (float)Math.Clamp(VelocityX - (Deceleration * deltaTime), 0, VelocityX);
+                VelocityX = (float)Math.Clamp(VelocityX - (Friction * deltaTime), 0, VelocityX);
             } else if (VelocityX < 0) {
-                VelocityX = (float)Math.Clamp(VelocityX + (Deceleration * deltaTime), VelocityX, 0);
+                VelocityX = (float)Math.Clamp(VelocityX + (Friction * deltaTime), VelocityX, 0);
             }
         }
         if (direction.Y < 0) {
@@ -112,9 +107,9 @@ public class PhysicsObject : GameObject
             VelocityY = (float)(VelocityY + (Acceleration * deltaTime));
         } else {
             if (VelocityY > 0) {
-                VelocityY = (float)Math.Clamp(VelocityY - (Deceleration * deltaTime), 0, VelocityY);
+                VelocityY = (float)Math.Clamp(VelocityY - (Friction * deltaTime), 0, VelocityY);
             } else if (VelocityY < 0) {
-                VelocityY = (float)Math.Clamp(VelocityY + (Deceleration * deltaTime), VelocityY, 0);
+                VelocityY = (float)Math.Clamp(VelocityY + (Friction * deltaTime), VelocityY, 0);
             }
         }
         string movementValues = string.Format("Velocity: {0}\n Position: {1}\ndirection: {2}",

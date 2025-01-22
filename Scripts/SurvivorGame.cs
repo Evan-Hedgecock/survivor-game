@@ -7,13 +7,12 @@ using Core.Character;
 using Core.Objects;
 using Core.Systems;
 using Core.Physics;
+using Core;
 
 namespace Scripts;
 public class SurvivorGame : Game {
     private readonly GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-
-
 	private int _height;
 	private int _width;
 
@@ -55,10 +54,7 @@ public class SurvivorGame : Game {
 
     public SurvivorGame() {
         _graphics = new GraphicsDeviceManager(this);
-		_collisionManager = new CollisionManager([.. _walls]);
-		_player = new(new Rectangle(100, -50, 20, 40), _collisionManager);
-		_camera = new Camera(new Vector2 (_player.PositionX, _player.PositionY));
-		//_camera = new Camera(new Vector2(_wall.Position.X, _wall.Position.Y - 0));
+		_camera = new Camera(new Vector2(0, 0));
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
@@ -69,6 +65,11 @@ public class SurvivorGame : Game {
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
+		Global.Services = Services;
+		_collisionManager = new CollisionManager([.. _walls]);
+		Services.AddService(typeof(CollisionManager), _collisionManager);
+
+		_player = new(new Rectangle(100, -50, 20, 40));
 		// Initialize game grid
 		int worldHeight = 500;
 		int worldWidth = 500;
@@ -88,6 +89,7 @@ public class SurvivorGame : Game {
 		//_dashDurationTimer = _player.DashDurationTimer();
 		//Timer[] timers = [_dashCooldownTimer, _dashDurationTimer];
 		//_timerManager = new TimerManager(timers);
+
 
         _inputAxis = new Vector2(0, 0);
 

@@ -5,23 +5,18 @@ using Core.Physics;
 
 namespace Core.Character;
 
-public class Player(Rectangle bounds, CollisionManager collisionManager) :
-             PhysicsObject(bounds, collisionManager) {
+public class Player(Rectangle bounds) : PhysicsObject(bounds) {
 
-    public void Initialize() {
+    public new void Initialize() {
         Acceleration = 900;
-        Deceleration = 900;
+        Friction = 900;
         Velocity = new Vector2(0, 0);
         MaxSpeed = 200;
         CollisionBoxHeight = Bounds.Height / 3;
         CollisionBoxY = CollisionBoxY + Bounds.Height - CollisionBox.Height;
         PositionX = BoundsX;
         PositionY = BoundsY;
-        Console.Write("Bounds: ");
-        Console.WriteLine(Bounds);
-        Console.Write("Position: ");
-        Console.WriteLine(Position);
-
+        _collisionManager = Global.Services.GetService(typeof(CollisionManager)) as CollisionManager;
     }
     
     public void Update(Vector2 inputAxis, GameTime gameTime) {

@@ -1,7 +1,4 @@
 using System;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Linq;
 using Microsoft.Xna.Framework;
 
 namespace Core.Objects;
@@ -9,21 +6,9 @@ namespace Core.Objects;
 public class CollisionObject : GameObject
 {
     public CollisionObject(PhysicsObject collider, GameObject collided) : base(collided.Bounds) {
-        // Get distance between the collider left and collided right
-        // collider right and collided left
-        // collider top and collided bottom
-        // collider bottom and collider top
-        // if the smallest value is not on the inside of collided
-            // assign the smallest value to Distance
-        // or else assign that value as PenDepth
         GetDistance(collider, collided);
         GetPenDepth(collider, collided);
         GetNormal(collided);
-        string collisionDetails = string.Format("Normal: {0}\n" +
-                                                "Distance: {1}\n" +
-                                                "PenDepth: {2}",
-                                                Normal, Distance, PenDepth);
-        Console.WriteLine(collisionDetails);
     }
     public float Distance { get; set; }
     public Vector2 Normal { get; set; }
@@ -42,7 +27,6 @@ public class CollisionObject : GameObject
                                                 collider.Bounds.Bottom);
         float bottomDistance = MathHelper.Distance(collided.CollisionBox.Bottom,
                                                    collisionBoxTopBeforeMove);
-        // Check to make sure the collision isn't on a perfect corner
         Distance = MathHelper.Min(Math.Min(rightDistance, leftDistance),
                                   Math.Min(topDistance, bottomDistance));
     }
@@ -58,8 +42,6 @@ public class CollisionObject : GameObject
         float rightPen = collider.Bounds.Left - collided.CollisionBox.Right;
         float leftPen = collided.CollisionBox.Left - collider.Bounds.Right;
 
-        string penDetails = string.Format("topPen: {0}\nbottomPen: {1}\nrightPen: {2}\nleftPen: {3}",
-                                          topPen, bottomPen, rightPen, leftPen);
         PenDepth = Math.Max(Math.Max(topPen, bottomPen),
                             Math.Max(rightPen, leftPen));
         if (PenDepth == topPen) {
@@ -98,9 +80,5 @@ public class CollisionObject : GameObject
         Vector2 normalVector = new((float)Math.Round(directionVector.X), (float)Math.Round(directionVector.Y));
         normalVector.Normalize();
         Normal = normalVector;
-        string vectorDetails = string.Format("directionVector: {0}\nnormalVector: {1}\n" +
-                                             "Normal: {2}",
-                                              directionVector, normalVector, Normal);
-        //Console.WriteLine(vectorDetails);
     }
 }
