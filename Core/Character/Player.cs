@@ -9,10 +9,10 @@ public class Player(Rectangle bounds, CollisionManager collisionManager) :
              PhysicsObject(bounds, collisionManager) {
 
     public void Initialize() {
-        Acceleration = 300;
-        Deceleration = 400;
+        Acceleration = 900;
+        Deceleration = 900;
         Velocity = new Vector2(0, 0);
-        MaxSpeed = 500;
+        MaxSpeed = 200;
         CollisionBoxHeight = Bounds.Height / 3;
         CollisionBoxY = CollisionBoxY + Bounds.Height - CollisionBox.Height;
         PositionX = BoundsX;
@@ -27,11 +27,7 @@ public class Player(Rectangle bounds, CollisionManager collisionManager) :
     public void Update(Vector2 inputAxis, GameTime gameTime) {
         Console.Write("Before updates Position: ");
         Console.WriteLine(Position);
-        MoveAndCollide(inputAxis, gameTime);
-        CollisionBoxX = (int)PositionX;
-        CollisionBoxY = (int)PositionY + Bounds.Height - CollisionBox.Height;
-        BoundsX = (int)PositionX;
-        BoundsY = (int)PositionY;
+        MoveAndSlide(inputAxis, gameTime);
         string values = string.Format("Bounds: {0}\nCollisionBox: {1}\n" +
                                       "Position: {2}\n", Bounds, CollisionBox, Position);
         Console.WriteLine(values);

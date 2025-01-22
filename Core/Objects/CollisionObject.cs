@@ -19,6 +19,11 @@ public class CollisionObject : GameObject
         GetDistance(collider, collided);
         GetPenDepth(collider, collided);
         GetNormal(collided);
+        string collisionDetails = string.Format("Normal: {0}\n" +
+                                                "Distance: {1}\n" +
+                                                "PenDepth: {2}",
+                                                Normal, Distance, PenDepth);
+        Console.WriteLine(collisionDetails);
     }
     public float Distance { get; set; }
     public Vector2 Normal { get; set; }
@@ -96,6 +101,6 @@ public class CollisionObject : GameObject
         string vectorDetails = string.Format("directionVector: {0}\nnormalVector: {1}\n" +
                                              "Normal: {2}",
                                               directionVector, normalVector, Normal);
-        Console.WriteLine(vectorDetails);
+        //Console.WriteLine(vectorDetails);
     }
 }

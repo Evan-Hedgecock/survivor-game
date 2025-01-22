@@ -35,7 +35,7 @@ public class PhysicsObject : GameObject
         _collisionManager = collisionManager;
     }
     //private CollisionManager _collisionManager;
-    public virtual void MoveAndCollide(Vector2 direction, GameTime gameTime) {
+    public virtual void MoveAndSlide(Vector2 direction, GameTime gameTime) {
         // Move CollisionBox by velocity
         // Check collisons
         // If there is a collision
@@ -44,15 +44,15 @@ public class PhysicsObject : GameObject
         // If there is no collision
             // Move Position by velocity
             // Reset collision box
-        CollisionBox = Move(direction, gameTime, CollisionBox);
-        if (!_collisionManager.IsColliding(this)) {
-            Console.WriteLine("Not colliding");
-            Move(direction, gameTime);
-            // Move(direction, gameTime);
-        } else {
-            CollisionObject collision = _collisionManager.GetCollision(this);
-            BoundsX -= (int)(collision.PenDepth * collision.Normal.X);
-            BoundsY -= (int)(collision.PenDepth * collision.Normal.Y);
+        Move(direction, gameTime);
+        if (_collisionManager.IsColliding(this)) {
+            var collision = _collisionManager.GetCollision(this);
+            if (collision.PenDepth < 0) {
+                BoundsX -= (int)(collision.PenDepth * collision.Normal.X);
+                BoundsY -= (int)(collision.PenDepth * collision.Normal.Y);
+                CollisionBoxX = PositionX;
+                CollisionBoxY = PositionY + Bounds.Height - CollisionBox.Height;
+            }
         }
     }
 
@@ -82,8 +82,10 @@ public class PhysicsObject : GameObject
         }
         string movementValues = string.Format("Velocity: {0}\n Position: {1}\ndirection: {2}",
                                               Velocity, Position, direction);
-        PositionX += (float)(VelocityX * deltaTime);
-        PositionY += (float)(VelocityY * deltaTime);
+        BoundsX += (int)(VelocityX * deltaTime);
+        BoundsY += (int)(VelocityY * deltaTime);
+        CollisionBoxX = PositionX;
+        CollisionBoxY = PositionY + Bounds.Height - CollisionBox.Height;
     }
     public Rectangle Move(Vector2 direction, GameTime gameTime, Rectangle oldRect) {
         string before= string.Format("Body before: {0}", oldRect);

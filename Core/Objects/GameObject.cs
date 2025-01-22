@@ -21,18 +21,16 @@ public abstract class GameObject
     }
     protected Rectangle _bounds;
     public Vector2 Position { 
-        get { return _position; } 
-        set { _position = Position; }
+        get { return new Vector2(_bounds.X, _bounds.Y); } 
     }
-    public float PositionX {
-        get { return _position.X; }
-        set { _position.X = value; }
+    public int PositionX {
+        get { return _bounds.X; }
+        set { _bounds.X = value; }
     }
-    public float PositionY {
-        get { return _position.Y; }
-        set { _position.Y = value; }
+    public int PositionY {
+        get { return _bounds.Y; }
+        set { _bounds.Y = value; }
     }
-    protected Vector2 _position;
     public Rectangle CollisionBox { 
         get { return _collisionBox; }
         set { _collisionBox = value; } 
@@ -63,7 +61,6 @@ public abstract class GameObject
                                      bounds.Width, bounds.Height);
         Console.Write("Constructor bounds: ");
         Console.WriteLine(bounds);
-        Position = new Vector2(bounds.X, bounds.Y);
     }
 
     public virtual void Draw(SpriteBatch spriteBatch) {
