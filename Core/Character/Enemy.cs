@@ -31,11 +31,16 @@ public class Enemy(Rectangle bounds, Grid grid) : PhysicsObject(bounds) {
         Node start = _grid.WorldPosToNode(new Vector2(CollisionBoxX,
                                                       CollisionBoxY));
         _path = _pathfinder.FindPath(start, target);
-        MoveAndSlide(MoveDirection(), gameTime);
+        MoveAndSlide(MoveDirection(player), gameTime);
     }
 
-    private Vector2 MoveDirection() {
-        Vector2 direction = Vector2.Subtract(_path[1], _path[0]);
+    private Vector2 MoveDirection(Player player) {
+        Vector2 direction;
+        try {
+            direction = Vector2.Subtract(_path[1], _path[0]);
+        } catch (Exception) {
+            direction = Vector2.Subtract(player.Position, Position);
+        }
         return direction;
     }
 }
