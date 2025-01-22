@@ -7,6 +7,7 @@ using Core.Objects;
 using Core.Systems;
 using Core.Physics;
 using Core;
+using System.Collections.Generic;
 
 namespace Scripts;
 public class SurvivorGame : Game {
@@ -33,6 +34,7 @@ public class SurvivorGame : Game {
     private Player _player;
 
 	// Enemy properties
+	private Enemy _enemy;
 
 	// Obstacles
 	private static StaticObject _wall = new(new Rectangle(-250, -90, 50, 60));
@@ -40,8 +42,6 @@ public class SurvivorGame : Game {
 	private static StaticObject _wall4 = new(new Rectangle(-40, 0, 50, 200));
 	private static StaticObject _wall3 = new(new Rectangle(-180, 100, 100, 100));
 	private static StaticObject[] _walls = [_wall, _wall2, _wall3, _wall4];
-		
-	
 
 	// Timers
 	private TimerManager _timerManager;
@@ -64,6 +64,7 @@ public class SurvivorGame : Game {
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
+
 		// Initialize game grid
 		int worldHeight = 500;
 		int worldWidth = 500;
@@ -72,8 +73,14 @@ public class SurvivorGame : Game {
 		_nodeGrid = _gameGrid.NodeGrid;
 		// Set nodes Blocked to true where a wall or other collider is
 
+		// Create characters
+		_player = new(new Rectangle(100, -50, 20, 40));
+		_enemy = new (new Rectangle(0, -100, 15, 30), _gameGrid);
+
+		List<GameObject> dynamicObjects = [_enemy, _player];
+
 		// Create and initialize services
-		_collisionManager = new CollisionManager([.. _walls]);
+		_collisionManager = new CollisionManager([.. _walls], dynamicObjects);
 		_collisionManager.Initialize();
 		_pathfinder = new Pathfinder(_gameGrid);
 
@@ -86,10 +93,11 @@ public class SurvivorGame : Game {
 		// Add services
 		Global.Services = Services;
 		Services.AddService(typeof(CollisionManager), _collisionManager);
+		Services.AddService(typeof(Pathfinder), _pathfinder);
 
-		// Create and initialize characters
-		_player = new(new Rectangle(100, -50, 20, 40));
+		// Initialize characters
 		_player.Initialize();
+		_enemy.Initialize();
 
         base.Initialize();
     }
@@ -108,7 +116,7 @@ public class SurvivorGame : Game {
 
 		// Assign textures
 		_player.Texture = _playerTexture;
-		//_enemy.Texture = _enemyTexture;
+		_enemy.Texture = _enemyTexture;
 		_wall.Texture = _wallTexture;
 		_wall2.Texture = _wallTexture;
 		_wall3.Texture = _wallTexture;
@@ -129,7 +137,8 @@ public class SurvivorGame : Game {
 
 		// Update characters
         _player.Update(_inputAxis, gameTime);
-		//_enemy.Update(_player);
+		_enemy.Update(_player, gameTime);
+		_collisionManager.Update();
 
 		// Update Systems
 		_camera.Update(new Vector2(_player.PositionX, _player.PositionY), GraphicsDevice);
@@ -141,12 +150,12 @@ public class SurvivorGame : Game {
         //DisplayFrames(gameTime);
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin(transformMatrix: _camera.CreateMatrix(GraphicsDevice));
-		//_enemy.Draw(_spriteBatch);
 		foreach (Node node in _nodeGrid) {
 			node.Draw(_spriteBatch);
 		}
         DrawWalls(_spriteBatch);
         _player.Draw(_spriteBatch);
+		_enemy.Draw(_spriteBatch, Color.Red);
         _spriteBatch.End();
         base.Draw(gameTime);
     }

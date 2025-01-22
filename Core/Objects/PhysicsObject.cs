@@ -34,8 +34,8 @@ public class PhysicsObject : GameObject
     public PhysicsObject(Rectangle bounds) : base(bounds) {
         _maxVelocity = new Vector2(MaxSpeed, MaxSpeed);
         _minVelocity = new Vector2(-1 * MaxSpeed, -1 * MaxSpeed);
-        _collisionManager = Global.Services.GetService(typeof(CollisionManager)) as CollisionManager;
     }
+
 
     public virtual void MoveAndSlide(Vector2 direction, GameTime gameTime) {
         // Move this in direction
@@ -85,7 +85,9 @@ public class PhysicsObject : GameObject
         BoundsY += (int)(VelocityY * deltaTime);
         UpdateCollisionBox();
     }
-
+    protected void InitializeCollisionManager() {
+        _collisionManager = Global.Services.GetService(typeof(CollisionManager)) as CollisionManager;
+    }
     private void UpdateCollisionBox() {
         CollisionBoxX = PositionX;
         CollisionBoxY = PositionY + Bounds.Height - CollisionBox.Height;

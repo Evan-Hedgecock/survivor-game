@@ -15,7 +15,7 @@ public class Player(Rectangle bounds) : PhysicsObject(bounds) {
         CollisionBoxY = CollisionBoxY + Bounds.Height - CollisionBox.Height;
         PositionX = BoundsX;
         PositionY = BoundsY;
-        _collisionManager = Global.Services.GetService(typeof(CollisionManager)) as CollisionManager;
+        InitializeCollisionManager();
     }
     
     public void Update(Vector2 inputAxis, GameTime gameTime) {

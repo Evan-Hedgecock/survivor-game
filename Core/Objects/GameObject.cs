@@ -63,4 +63,8 @@ public abstract class GameObject
         spriteBatch.Draw(Texture, Bounds, null, Color.White, Rotation,
                          new Vector2(0, 0), SpriteEffects.None, 0.0f);
     }
+    public virtual void Draw(SpriteBatch spriteBatch, Color color) {
+        spriteBatch.Draw(Texture, Bounds, null, color, Rotation,
+                         new Vector2(0, 0), SpriteEffects.None, 0.0f);
+    }
 }
