@@ -54,6 +54,25 @@ distance between the CollisionBox and CollisionObject, and penetration depth.
 * Vector2 Normal: Direction perpendicular to side of CollisionObject that was collided with
 * Float penDepth: Amount of overlap between CollisionObject and object colliding with it.
 
+## Character extends PhysicsObject
+### Properties
+* Rectangle hitbox: Slightly inflated collisionbox, when it overlaps with a hurtbox, it will deal damage to that character
+* Rectangle hurtbox: Slightly inflated collisionbox, when a hitbox overlaps with it, take damage
+* int health: Amount of health character has.
+* int damage: Amount of damage character deals.
+### Methods
+* public int TakeDamage(int amount): Subtracts health by amount.
+
+## Enemy extends Character
+### Properties
+* Pathfinder pathfinder: Used to track, and find a path to a target (usually, maybe always, the player).
+* List<GameObject> path: Path to follow returned from the pathfinder.
+* Grid grid: Grid of nodes to find the start and target nodes for pathfinder.
+
+### Methods
+* private Vector2 MoveDirection(Player player): Calculates move direction, either based on the path, or if close enough to the player then towards the player.
+
+
 
 ## Other files:
 ### Core/Enums.cs
