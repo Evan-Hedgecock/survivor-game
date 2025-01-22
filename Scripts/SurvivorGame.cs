@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Core.Character;
+using Core.Entity;
 using Core.Objects;
 using Core.Systems;
 using Core.Physics;
@@ -52,6 +52,7 @@ public class SurvivorGame : Game {
 
 	private readonly Camera _camera;
 	private CollisionManager _collisionManager;
+	private DamageManager _damageManager;
 
     public SurvivorGame() {
         _graphics = new GraphicsDeviceManager(this);
@@ -81,6 +82,7 @@ public class SurvivorGame : Game {
 
 		List<GameObject> dynamicObjects = [_enemy, _player];
 		List<GameObject> staticObjects = [.. _walls];
+		List<Character> characterList = [_enemy, _player];
 
 		foreach (GameObject obj in staticObjects) {
 			Node[] nodes = _gameGrid.WorldRectToNodes(obj.CollisionBox);
@@ -92,6 +94,8 @@ public class SurvivorGame : Game {
 		// Create and initialize services
 		_collisionManager = new CollisionManager(staticObjects, dynamicObjects);
 		_collisionManager.Initialize();
+		_damageManager = new DamageManager(characterList);
+		_damageManager.Initialize();
 		_pathfinder = new Pathfinder(_gameGrid);
 
 		// Create timers and store in timerManager
@@ -103,6 +107,7 @@ public class SurvivorGame : Game {
 		// Add services
 		Global.Services = Services;
 		Services.AddService(typeof(CollisionManager), _collisionManager);
+		Services.AddService(typeof(DamageManager), _damageManager);
 		Services.AddService(typeof(Pathfinder), _pathfinder);
 
 		// Initialize characters
@@ -149,6 +154,7 @@ public class SurvivorGame : Game {
         _player.Update(_inputAxis, gameTime);
 		_enemy.Update(_player, gameTime);
 		_collisionManager.Update();
+		_damageManager.Update();
 
 		Node start = _gameGrid.WorldPosToNode(new Vector2(_enemy.CollisionBoxX,
 														  _enemy.CollisionBoxY));
