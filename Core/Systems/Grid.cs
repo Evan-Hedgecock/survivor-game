@@ -51,7 +51,48 @@ public class Grid {
 								 (int) GridSize.Y - 1); 
 		int GridCol = Math.Clamp((int) (GridSize.X * percentX), 0,
 								 (int) GridSize.X - 1); 
-		return NodeGrid[GridRow, GridCol];
+		return NearestUnblockedNode(NodeGrid[GridRow, GridCol]);
+	}
+
+	public Node NearestUnblockedNode(Node node) {
+		Node current = node;
+		int increment = 1;
+		while (current.Blocked) {
+			current = NodeGrid[node.Row - increment, node.Col];
+			if (!current.Blocked) {
+				break;
+			}
+			current = NodeGrid[node.Row + increment, node.Col];
+			if (!current.Blocked) {
+				break;
+			}
+			current = NodeGrid[node.Row, node.Col - increment];
+			if (!current.Blocked) {
+				break;
+			}
+			current = NodeGrid[node.Row, node.Col + increment];
+			if (!current.Blocked) {
+				break;
+			}
+			current = NodeGrid[node.Row - increment, node.Col - increment];
+			if (!current.Blocked) {
+				break;
+			}
+			current = NodeGrid[node.Row + increment, node.Col + increment];
+			if (!current.Blocked) {
+				break;
+			}
+			current = NodeGrid[node.Row - increment, node.Col + increment];
+			if (!current.Blocked) {
+				break;
+			}
+			current = NodeGrid[node.Row + increment, node.Col - increment];
+			if (!current.Blocked) {
+				break;
+			}
+			increment++;
+		}
+		return current;
 	}
 
 	public Node[] WorldRectToNodes(Rectangle worldRect) {

@@ -12,8 +12,8 @@ public class Enemy(Rectangle bounds, Grid grid) : PhysicsObject(bounds) {
     private List<Vector2> _path;
     private readonly Grid _grid = grid;
     public void Initialize() {
-        Acceleration = 100;
-        Friction = 900;
+        Acceleration = 200;
+        Friction = 50;
         Velocity = new Vector2(0, 0);
         MaxSpeed = 50;
         CollisionBoxHeight = Bounds.Height / 3;

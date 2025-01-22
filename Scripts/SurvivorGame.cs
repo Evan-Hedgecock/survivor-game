@@ -80,9 +80,17 @@ public class SurvivorGame : Game {
 		_enemy = new (new Rectangle(0, -100, 15, 30), _gameGrid);
 
 		List<GameObject> dynamicObjects = [_enemy, _player];
+		List<GameObject> staticObjects = [.. _walls];
+
+		foreach (GameObject obj in staticObjects) {
+			Node[] nodes = _gameGrid.WorldRectToNodes(obj.CollisionBox);
+			foreach (Node node in nodes) {
+				node.Blocked = true;
+			}
+		}
 
 		// Create and initialize services
-		_collisionManager = new CollisionManager([.. _walls], dynamicObjects);
+		_collisionManager = new CollisionManager(staticObjects, dynamicObjects);
 		_collisionManager.Initialize();
 		_pathfinder = new Pathfinder(_gameGrid);
 
