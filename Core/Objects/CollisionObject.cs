@@ -68,7 +68,7 @@ public class CollisionObject : GameObject
             _side = Side.Bottom;
         } else if (PenDepth == leftPen) {
             _side = Side.Left;
-        } else if (PenDepth == rightPen) {
+        } else {
             _side = Side.Right;
         }
     }

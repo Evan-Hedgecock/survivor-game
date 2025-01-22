@@ -45,13 +45,18 @@ public class PhysicsObject : GameObject
             // Move Position by velocity
             // Reset collision box
         Move(direction, gameTime);
-        if (_collisionManager.IsColliding(this)) {
-            var collision = _collisionManager.GetCollision(this);
-            if (collision.PenDepth < 0) {
-                BoundsX -= (int)(collision.PenDepth * collision.Normal.X);
-                BoundsY -= (int)(collision.PenDepth * collision.Normal.Y);
-                CollisionBoxX = PositionX;
-                CollisionBoxY = PositionY + Bounds.Height - CollisionBox.Height;
+        while (_collisionManager.IsColliding(this)) {
+            var collisions = _collisionManager.GetCollision(this);
+            Console.Write("Number of collisions: ");
+            Console.WriteLine(collisions.Count);
+            foreach (CollisionObject collision in collisions)
+            {
+                if (collision.PenDepth < 0) {
+                    BoundsX -= (int)(collision.PenDepth * collision.Normal.X);
+                    BoundsY -= (int)(collision.PenDepth * collision.Normal.Y);
+                    CollisionBoxX = PositionX;
+                    CollisionBoxY = PositionY + Bounds.Height - CollisionBox.Height;
+                }
             }
         }
     }

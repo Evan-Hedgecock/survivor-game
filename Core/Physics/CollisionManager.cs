@@ -66,19 +66,22 @@ public class CollisionManager(List<GameObject> staticObjects)
         return false;
     }
 
-    public CollisionObject GetCollision(PhysicsObject collider) {
+    public List<CollisionObject> GetCollision(PhysicsObject collider) {
         Node[] colliderInNodes = CollisionGrid.WorldRectToNodes(collider.CollisionBox);
-        List<GameObject> collisionList = [];
+        List<CollisionObject> collisionList = [];
+        List<GameObject> collided = [];
         foreach (Node node in colliderInNodes) {
             if (ObjectGrid[node.Row, node.Col].Count == 0) {
                 continue;
             } 
             foreach (GameObject obj in ObjectGrid[node.Row, node.Col]) {
-                if (obj.CollisionBox.Intersects(collider.CollisionBox) && obj != collider) {
-                    collisionList.Add(obj);
+                if (obj.CollisionBox.Intersects(collider.CollisionBox) &&
+                    obj != collider && !collided.Contains(obj)) {
+                    collisionList.Add(new(collider, obj));
+                    collided.Add(obj);
                 }
             }
         }
-        return new(collider, collisionList[0]);
+        return collisionList;
     }
 }
