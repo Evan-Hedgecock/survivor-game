@@ -15,6 +15,7 @@ public class CollisionObject : GameObject
     public float PenDepth { get; set; }
     private Side _side;
 
+    // Get distance between collider collision side and collided collision side
     private void GetDistance(PhysicsObject collider, GameObject collided) {
         float collisionBoxTopBeforeMove = collider.Bounds.Top +
                                           collider.Bounds.Height -
@@ -31,12 +32,11 @@ public class CollisionObject : GameObject
                                   Math.Min(topDistance, bottomDistance));
     }
 
+    // Get collider penetration depth into collided object
     private void GetPenDepth(PhysicsObject collider, GameObject collided) {
         float collisionBoxTopBeforeMove = collider.Bounds.Top +
                                           collider.Bounds.Height -
                                           collider.CollisionBox.Height;
-        // Subtract the positive direction of collider or collided side from the other
-        // Return the smallest value
         float topPen = collided.CollisionBox.Top - collider.Bounds.Bottom;
         float bottomPen = collisionBoxTopBeforeMove - collided.CollisionBox.Bottom;
         float rightPen = collider.Bounds.Left - collided.CollisionBox.Right;
@@ -55,6 +55,7 @@ public class CollisionObject : GameObject
         }
     }
 
+    // Get normal vector of wall collided into
     private void GetNormal(GameObject collided) {
         var directionVector = _side switch
         {

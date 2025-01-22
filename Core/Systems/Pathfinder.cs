@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Core.Systems;
 
 namespace Core.Systems;
 public class Pathfinder(Grid gameGrid)
 {
-	private readonly Grid _gameGrid = gameGrid;
 	private readonly Node[,] _nodeGrid = gameGrid.NodeGrid;
 
     public List<Vector2> FindPath(Node start, Node target) {

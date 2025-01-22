@@ -1,7 +1,5 @@
 using System;
 using Microsoft.Xna.Framework;
-using Core;
-using Microsoft.VisualBasic.FileIO;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Core.Objects;
@@ -59,8 +57,6 @@ public abstract class GameObject
         Bounds = bounds;
         CollisionBox = new Rectangle(bounds.X, bounds.Y,
                                      bounds.Width, bounds.Height);
-        Console.Write("Constructor bounds: ");
-        Console.WriteLine(bounds);
     }
 
     public virtual void Draw(SpriteBatch spriteBatch) {

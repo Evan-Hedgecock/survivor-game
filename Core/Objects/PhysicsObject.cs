@@ -37,20 +37,19 @@ public class PhysicsObject : GameObject
         _collisionManager = Global.Services.GetService(typeof(CollisionManager)) as CollisionManager;
     }
 
-    public void Initialize() {
-
-    }
     public virtual void MoveAndSlide(Vector2 direction, GameTime gameTime) {
+        // Move this in direction
         Move(direction, gameTime);
+        // If it is then colliding, get all of the collisions details
         if (_collisionManager.IsColliding(this)) {
             var collisions = _collisionManager.GetCollision(this);
+            // For every collision, move this away from collision wall by penDepth
             foreach (CollisionObject collision in collisions)
             {
                 if (collision.PenDepth < 0) {
                     BoundsX -= (int)(collision.PenDepth * collision.Normal.X);
                     BoundsY -= (int)(collision.PenDepth * collision.Normal.Y);
-                    CollisionBoxX = PositionX;
-                    CollisionBoxY = PositionY + Bounds.Height - CollisionBox.Height;
+                    UpdateCollisionBox();
                 }
             }
         }
@@ -84,39 +83,11 @@ public class PhysicsObject : GameObject
                                               Velocity, Position, direction);
         BoundsX += (int)(VelocityX * deltaTime);
         BoundsY += (int)(VelocityY * deltaTime);
+        UpdateCollisionBox();
+    }
+
+    private void UpdateCollisionBox() {
         CollisionBoxX = PositionX;
         CollisionBoxY = PositionY + Bounds.Height - CollisionBox.Height;
-    }
-    public Rectangle Move(Vector2 direction, GameTime gameTime, Rectangle oldRect) {
-        string before= string.Format("Body before: {0}", oldRect);
-        double deltaTime = gameTime.ElapsedGameTime.TotalSeconds;
-        if (direction.X < 0) {
-            VelocityX = (float)(VelocityX - (Acceleration * deltaTime));
-        } else if (direction.X > 0) {
-            VelocityX = (float)(VelocityX + (Acceleration * deltaTime));
-        } else {
-            if (VelocityX > 0) {
-                VelocityX = (float)Math.Clamp(VelocityX - (Friction * deltaTime), 0, VelocityX);
-            } else if (VelocityX < 0) {
-                VelocityX = (float)Math.Clamp(VelocityX + (Friction * deltaTime), VelocityX, 0);
-            }
-        }
-        if (direction.Y < 0) {
-            VelocityY = (float)(VelocityY - (Acceleration * deltaTime));
-        } else if (direction.Y > 0) {
-            VelocityY = (float)(VelocityY + (Acceleration * deltaTime));
-        } else {
-            if (VelocityY > 0) {
-                VelocityY = (float)Math.Clamp(VelocityY - (Friction * deltaTime), 0, VelocityY);
-            } else if (VelocityY < 0) {
-                VelocityY = (float)Math.Clamp(VelocityY + (Friction * deltaTime), VelocityY, 0);
-            }
-        }
-        string movementValues = string.Format("Velocity: {0}\n Position: {1}\ndirection: {2}",
-                                              Velocity, Position, direction);
-        Rectangle newRect = new Rectangle((int)(oldRect.X + (VelocityX * deltaTime)),
-                             (int)(oldRect.Y + (VelocityY * deltaTime)),
-                             oldRect.Width, oldRect.Height);
-        return newRect;
     }
 }

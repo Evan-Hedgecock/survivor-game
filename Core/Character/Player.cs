@@ -1,13 +1,12 @@
 using Microsoft.Xna.Framework;
 using Core.Objects;
-using System;
 using Core.Physics;
 
 namespace Core.Character;
 
 public class Player(Rectangle bounds) : PhysicsObject(bounds) {
 
-    public new void Initialize() {
+    public void Initialize() {
         Acceleration = 900;
         Friction = 900;
         Velocity = new Vector2(0, 0);
@@ -20,11 +19,6 @@ public class Player(Rectangle bounds) : PhysicsObject(bounds) {
     }
     
     public void Update(Vector2 inputAxis, GameTime gameTime) {
-        Console.Write("Before updates Position: ");
-        Console.WriteLine(Position);
         MoveAndSlide(inputAxis, gameTime);
-        string values = string.Format("Bounds: {0}\nCollisionBox: {1}\n" +
-                                      "Position: {2}\n", Bounds, CollisionBox, Position);
-        Console.WriteLine(values);
     }
 }

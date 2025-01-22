@@ -1,21 +1,15 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace Core.Systems;
-public class Timer {
-	private double _time;
-	private double _duration;
+public class Timer(double time, Action callback)
+{
+	private double _time = time;
+	private readonly double _duration = time;
 	private bool _isActive;
-	private Action _timeout;
+	private readonly Action _timeout = callback;
 
-	public Timer(double time, Action callback) {
-		_timeout = callback;
-		_duration = time;
-		_time = time;
-	}
-
-	public void CountDown(GameTime gameTime) {
+    public void CountDown(GameTime gameTime) {
 		if (_time <= 0) {
 			_timeout();
 			Reset();
@@ -34,22 +28,5 @@ public class Timer {
 	private void Reset() {
 		_time = _duration;
 		_isActive = false;
-	}
-}
-
-public class TimerManager {
-	private Timer[] _timers;
-
-	public TimerManager(Timer[] timers) {
-		_timers = timers;
-	}
-
-	public void Update(GameTime gameTime) {
-		// Update every timer that is active
-		foreach (Timer timer in _timers) {
-			if (timer.IsActive()) {
-				timer.CountDown(gameTime);
-			}
-		}
 	}
 }

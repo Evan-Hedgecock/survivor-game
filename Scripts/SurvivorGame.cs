@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -23,7 +22,7 @@ public class SurvivorGame : Game {
 	private Pathfinder _pathfinder;
 
 	// Input properties
-    private Vector2 _inputAxis;
+    private Vector2 _inputAxis = new(0, 0);
 
 	// Textures
 	private Texture2D _wallTexture;
@@ -65,11 +64,6 @@ public class SurvivorGame : Game {
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
-		Global.Services = Services;
-		_collisionManager = new CollisionManager([.. _walls]);
-		Services.AddService(typeof(CollisionManager), _collisionManager);
-
-		_player = new(new Rectangle(100, -50, 20, 40));
 		// Initialize game grid
 		int worldHeight = 500;
 		int worldWidth = 500;
@@ -78,11 +72,10 @@ public class SurvivorGame : Game {
 		_nodeGrid = _gameGrid.NodeGrid;
 		// Set nodes Blocked to true where a wall or other collider is
 
+		// Create and initialize services
+		_collisionManager = new CollisionManager([.. _walls]);
 		_collisionManager.Initialize();
-		_player.Initialize();
-
 		_pathfinder = new Pathfinder(_gameGrid);
-		//_enemy = new Enemy(_pathfinder, _gameGrid);
 
 		// Create timers and store in timerManager
 		//_dashCooldownTimer = _player.DashCooldownTimer();
@@ -90,8 +83,13 @@ public class SurvivorGame : Game {
 		//Timer[] timers = [_dashCooldownTimer, _dashDurationTimer];
 		//_timerManager = new TimerManager(timers);
 
+		// Add services
+		Global.Services = Services;
+		Services.AddService(typeof(CollisionManager), _collisionManager);
 
-        _inputAxis = new Vector2(0, 0);
+		// Create and initialize characters
+		_player = new(new Rectangle(100, -50, 20, 40));
+		_player.Initialize();
 
         base.Initialize();
     }
@@ -108,7 +106,7 @@ public class SurvivorGame : Game {
 			node.Texture = _playerTexture;
 		}
 
-		// Create Textures
+		// Assign textures
 		_player.Texture = _playerTexture;
 		//_enemy.Texture = _enemyTexture;
 		_wall.Texture = _wallTexture;
@@ -122,16 +120,18 @@ public class SurvivorGame : Game {
 			Keyboard.GetState().IsKeyDown(Keys.Escape)) {
             Exit();
 		}
-		//_collisionManager.Update();
 		// Update timerManager timers
 		//_timerManager.Update(gameTime);
 
+		// Update input
 		MoveInput();
-		Console.WriteLine(_inputAxis);
 		//DashInput();
 
+		// Update characters
         _player.Update(_inputAxis, gameTime);
 		//_enemy.Update(_player);
+
+		// Update Systems
 		_camera.Update(new Vector2(_player.PositionX, _player.PositionY), GraphicsDevice);
 
         base.Update(gameTime);
@@ -145,7 +145,7 @@ public class SurvivorGame : Game {
 		foreach (Node node in _nodeGrid) {
 			node.Draw(_spriteBatch);
 		}
-		DrawWalls(_spriteBatch);
+        DrawWalls(_spriteBatch);
         _player.Draw(_spriteBatch);
         _spriteBatch.End();
         base.Draw(gameTime);
@@ -188,7 +188,7 @@ public class SurvivorGame : Game {
 //		}
 //	}
 
-	private void DrawWalls(SpriteBatch spriteBatch) {
+	private static void DrawWalls(SpriteBatch spriteBatch) {
 		foreach (StaticObject wall in _walls) {
 			wall.Draw(spriteBatch);
 		}
