@@ -97,6 +97,29 @@ Start an invulnerability cooldown, and set owner to invulnerable
 * void Exit(): set owner invulnerable to false
 * void Update(): Countdown invulnerability cooldown, when cooldown is up, then call Exit()
 
+# BaseUIElement
+Base UI class that all UI elements will inherit from
+## Properties
+* Rectangle Area: The are that the UI element will occupy. Includes drawing location, width and height
+* bool Visible: Whether the UI element should be drawn or not
+## Methods
+* abstract void Draw(): Will draw all of the textures in the proper order
+* abstract void Update(): Perform any updates that might change how, when, or where the UI elemnt appears
+
+# ProgressBar extends BaseUIElement
+Any UI element that has a background and foreground showing differences between states.
+Ex: Loading bar, health bar, stamina bar
+## Properties
+* Rectangle foregroundArea: area of bar that shows the progress, should have the same X and Y as
+the base class Rectangle Area
+* Texture2D backgroundTexture: Texture that will take up the full progress bar area
+* Texture2D foregroundTexture: Texture that will take up the full foregroundArea denoting the Progress
+
+# HealthBar extends ProgressBar
+Progress bar that displays the health of the owner
+# Properties
+* Vector2 offset: x and y offset from the owner position to where healthbar should be positioned
+* Character owner: owner whose health is being displayed
 
 ## Other files:
 ### Core/Enums.cs

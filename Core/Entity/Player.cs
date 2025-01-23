@@ -21,8 +21,11 @@ public class Player(Rectangle bounds) : Character(bounds) {
         PositionY = BoundsY;
 
         // Health and damage properties
-        Health = 200;
+        MaxHealth = 200;
+        Health = MaxHealth;
         Damage = 20;
+
+        HealthBar = new(5, 50, this);
 
         // Services
         _damageManager = Global.Services.GetService(typeof(DamageManager)) as DamageManager;
@@ -44,5 +47,6 @@ public class Player(Rectangle bounds) : Character(bounds) {
         MoveAndSlide(inputAxis, gameTime);
         _stateMachine.Update(gameTime);
         _timerManager.Update(gameTime);
+        HealthBar.Update();
     }
 }

@@ -127,6 +127,7 @@ public class SurvivorGame : Game {
 
 		// Assign textures
 		_player.Texture = _playerTexture;
+		_player.HealthBar.LoadTextures(_playerTexture, _playerTexture);
 		_enemy.Texture = _enemyTexture;
 		_wall.Texture = _wallTexture;
 		_wall2.Texture = _wallTexture;
