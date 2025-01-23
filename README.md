@@ -72,6 +72,30 @@ distance between the CollisionBox and CollisionObject, and penetration depth.
 ### Methods
 * private Vector2 MoveDirection(Player player): Calculates move direction, either based on the path, or if close enough to the player then towards the player.
 
+## StateMachine
+Every class that has different states will have access to an instance of a state machine to handle their states.
+Its constructor will take a list of states that the class it's a part of needs, and also the initial state of that class.
+It will Update the current state every frame, and enter into and exit from other states when necessary.
+
+## State
+Abstract state will have an Enter, Exit, and Update functions.
+It will also have property referencing which object it's the state of
+### Properties
+* string Name: Name of this state for quick reference in StatMachine state dictionary
+* T Owner: Reference to the object that has this state
+### Methods
+* void Enter(): Will perform functionality when initially entering into the state
+* void Exit(): Will perform functionality when leaving this state
+* void Update(): Will perform any updates needed while in this state
+
+# Damaged extends State
+State that will put the owner into an invulnerable cooldown.
+It will also perform any other functions the owner needs when initially damaged
+## Methods
+* void Enter(): Check owner health, if health is <= 0 then owner should die. if not:
+Start an invulnerability cooldown, and set owner to invulnerable
+* void Exit(): set owner invulnerable to false
+* void Update(): Countdown invulnerability cooldown, when cooldown is up, then call Exit()
 
 
 ## Other files:

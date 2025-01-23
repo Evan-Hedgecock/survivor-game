@@ -83,7 +83,7 @@ public class PhysicsObject : GameObject
                                               "\nXMovement: {4}\nYMovement: {5}\n",
                                               Velocity, Position, direction, deltaTime,
                                               VelocityX * deltaTime, VelocityY * deltaTime);
-        Console.WriteLine(movementValues);
+        // Console.WriteLine(movementValues);
         BoundsX += (int)Math.Round(VelocityX * deltaTime);
         BoundsY += (int)Math.Round(VelocityY * deltaTime);
         UpdateCollisionBox();

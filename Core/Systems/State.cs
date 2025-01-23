@@ -1,14 +1,13 @@
-using System;
-using Microsoft.Xna.Framework;
+using Core.Entity;
 
 namespace Core.Systems;
-
-public abstract class State {
-    public string Name {
+public abstract class State<T>(string name, T owner) {
+    public string  Name {
         get { return _name.ToLower(); }
         set { _name = value.ToLower(); }
     }
-    private string _name;
+    protected string _name = name.ToLower();
+    protected T _owner = owner;
     public abstract void Enter();
     public abstract void Exit();
     public abstract void Update(float deltaTime);

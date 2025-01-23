@@ -4,6 +4,8 @@ using Core.Systems;
 namespace Core.Entity;
 
 public class Player(Rectangle bounds) : Character(bounds) {
+    private State<Character> _damaged;
+    private State<Character> _idle;
 
     public void Initialize() {
         // Movement properties
@@ -25,9 +27,22 @@ public class Player(Rectangle bounds) : Character(bounds) {
         // Services
         _damageManager = Global.Services.GetService(typeof(DamageManager)) as DamageManager;
         InitializeCollisionManager();
+        _timerManager = Global.Services.GetService(typeof(TimerManager)) as TimerManager;
+
+        // States
+        _damaged = new Damaged<Character>("damaged", this);
+        _idle = new Idle<Character>("idle", this);
+        _stateMachine = new StateMachine<Character>([_damaged, _idle], _idle);
+        _stateMachine.Initialize();
+
+        // Timers
+        _invulnerableTimer = new Timer(0.5f, DamageTimerAlarm);
+        _timerManager.AddTimer(_invulnerableTimer);
     }
     
     public void Update(Vector2 inputAxis, GameTime gameTime) {
         MoveAndSlide(inputAxis, gameTime);
+        _stateMachine.Update(gameTime);
+        _timerManager.Update(gameTime);
     }
 }

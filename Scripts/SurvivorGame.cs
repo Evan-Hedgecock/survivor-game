@@ -97,18 +97,14 @@ public class SurvivorGame : Game {
 		_damageManager = new DamageManager(characterList);
 		_damageManager.Initialize();
 		_pathfinder = new Pathfinder(_gameGrid);
-
-		// Create timers and store in timerManager
-		//_dashCooldownTimer = _player.DashCooldownTimer();
-		//_dashDurationTimer = _player.DashDurationTimer();
-		//Timer[] timers = [_dashCooldownTimer, _dashDurationTimer];
-		//_timerManager = new TimerManager(timers);
+		_timerManager = new TimerManager();
 
 		// Add services
 		Global.Services = Services;
 		Services.AddService(typeof(CollisionManager), _collisionManager);
 		Services.AddService(typeof(DamageManager), _damageManager);
 		Services.AddService(typeof(Pathfinder), _pathfinder);
+		Services.AddService(typeof(TimerManager), _timerManager);
 
 		// Initialize characters
 		_player.Initialize();
