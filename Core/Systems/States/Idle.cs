@@ -1,6 +1,6 @@
 using System;
 
-namespace Core.Systems;
+namespace Core.Systems.States;
 
 public class Idle<T>(string name, T owner) : State<T>(name, owner)
 {

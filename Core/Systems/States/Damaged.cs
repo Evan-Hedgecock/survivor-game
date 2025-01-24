@@ -1,7 +1,7 @@
 using System;
 using Core.Entity;
 
-namespace Core.Systems;
+namespace Core.Systems.States;
 
 public class Damaged<T>(string name, Character owner) : State<Character>(name, owner)
 {
@@ -9,14 +9,11 @@ public class Damaged<T>(string name, Character owner) : State<Character>(name, o
     {
         if (_owner.Health > 0) {
             _owner.OnDamage();
-        } else {
-            Console.WriteLine("Dead");
         }
     }
 
     public override void Exit()
     {
-        Console.WriteLine("Exiting damaged state");
         _owner.OnRecover();
     }
 

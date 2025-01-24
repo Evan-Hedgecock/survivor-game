@@ -1,8 +1,10 @@
 using Core.Entity;
 
-namespace Core.Systems;
-public abstract class State<T>(string name, T owner) {
-    public string  Name {
+namespace Core.Systems.States;
+public abstract class State<T>(string name, T owner)
+{
+    public string Name
+    {
         get { return _name.ToLower(); }
         set { _name = value.ToLower(); }
     }

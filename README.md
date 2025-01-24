@@ -76,8 +76,19 @@ distance between the CollisionBox and CollisionObject, and penetration depth.
 Every class that has different states will have access to an instance of a state machine to handle their states.
 Its constructor will take a list of states that the class it's a part of needs, and also the initial state of that class.
 It will Update the current state every frame, and enter into and exit from other states when necessary.
+## Properties
+* Dictionary States: All of the states this state machine has access to. Key: string. Value: State.
+* State currentState: The current state that is being updated
+* State initialState: What state should be set as current on intialization
+## Methods
+* void Initialize(): Creates the dictionary of all states this machine has access to, and sets the
+inital state as current
+* void Update(): Updates the currentState
+* void ChangeState(string newState): if the newState is valid, exit current state,
+and enter into new state.
 
-## State
+
+# State
 Abstract state will have an Enter, Exit, and Update functions.
 It will also have property referencing which object it's the state of
 ### Properties
