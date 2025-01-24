@@ -5,7 +5,8 @@ namespace Core.Objects;
 
 public class CollisionObject : GameObject
 {
-    public CollisionObject(PhysicsObject collider, GameObject collided) : base(collided.Bounds) {
+    public CollisionObject(PhysicsObject collider, GameObject collided) : base(collided.Bounds)
+    {
         GetDistance(collider, collided);
         GetPenDepth(collider, collided);
         GetNormal(collided);
@@ -16,7 +17,8 @@ public class CollisionObject : GameObject
     private Side _side;
 
     // Get distance between collider collision side and collided collision side
-    private void GetDistance(PhysicsObject collider, GameObject collided) {
+    private void GetDistance(PhysicsObject collider, GameObject collided)
+    {
         float collisionBoxTopBeforeMove = collider.Bounds.Top +
                                           collider.Bounds.Height -
                                           collider.CollisionBox.Height;
@@ -33,7 +35,8 @@ public class CollisionObject : GameObject
     }
 
     // Get collider penetration depth into collided object
-    private void GetPenDepth(PhysicsObject collider, GameObject collided) {
+    private void GetPenDepth(PhysicsObject collider, GameObject collided)
+    {
         float collisionBoxTopBeforeMove = collider.Bounds.Top +
                                           collider.Bounds.Height -
                                           collider.CollisionBox.Height;
@@ -44,19 +47,27 @@ public class CollisionObject : GameObject
 
         PenDepth = Math.Max(Math.Max(topPen, bottomPen),
                             Math.Max(rightPen, leftPen));
-        if (PenDepth == topPen) {
+        if (PenDepth == topPen)
+        {
             _side = Side.Top;
-        } else if (PenDepth == bottomPen) {
+        }
+        else if (PenDepth == bottomPen)
+        {
             _side = Side.Bottom;
-        } else if (PenDepth == leftPen) {
+        }
+        else if (PenDepth == leftPen)
+        {
             _side = Side.Left;
-        } else {
+        }
+        else
+        {
             _side = Side.Right;
         }
     }
 
     // Get normal vector of wall collided into
-    private void GetNormal(GameObject collided) {
+    private void GetNormal(GameObject collided)
+    {
         var directionVector = _side switch
         {
             Side.Right => new Vector2(collided.CollisionBox.Right -
@@ -76,7 +87,7 @@ public class CollisionObject : GameObject
                                        collided.CollisionBox.Bottom -
                                        collided.CollisionBox.Bottom),
             _ => new Vector2(0, 0),
-    };
+        };
         directionVector.Rotate((float)Math.PI / 2);
         Vector2 normalVector = new((float)Math.Round(directionVector.X), (float)Math.Round(directionVector.Y));
         normalVector.Normalize();

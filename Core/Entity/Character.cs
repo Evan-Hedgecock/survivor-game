@@ -10,16 +10,21 @@ using System.Linq.Expressions;
 
 namespace Core.Entity;
 
-public class Character(Rectangle bounds) : PhysicsObject(bounds) {
-    public virtual Rectangle Hurtbox {
-        get {
+public class Character(Rectangle bounds) : PhysicsObject(bounds)
+{
+    public virtual Rectangle Hurtbox
+    {
+        get
+        {
             return new Rectangle(CollisionBoxX - 2, CollisionBoxY - 2,
                                  CollisionBox.Width + 4,
                                  CollisionBox.Height + 4);
         }
-    } 
-    public virtual Rectangle Hitbox {
-        get {
+    }
+    public virtual Rectangle Hitbox
+    {
+        get
+        {
             return new Rectangle(CollisionBoxX, CollisionBoxY - 2,
                                  CollisionBox.Width,
                                  CollisionBox.Height + 2);
@@ -36,40 +41,51 @@ public class Character(Rectangle bounds) : PhysicsObject(bounds) {
     protected Timer _invulnerableTimer;
     public HealthBar HealthBar;
 
-    public void TakeDamage(int amount) {
-        if (_invulnerable || !_alive) {
+    public void TakeDamage(int amount)
+    {
+        if (_invulnerable || !_alive)
+        {
             Console.WriteLine("Invulnerable baby!");
             return;
         }
         Health -= amount;
         Console.WriteLine("About to change state to damaged");
-        if (Health > 0) {
+        if (Health > 0)
+        {
             _stateMachine.ChangeState("damaged");
-        } else {
+        }
+        else
+        {
             _stateMachine.ChangeState("dying");
         }
         Console.WriteLine("Successfully changed state");
     }
-    public void OnDamage() {
+    public void OnDamage()
+    {
         _invulnerableTimer.Start();
         _invulnerable = true;
     }
-    public void OnRecover() {
+    public void OnRecover()
+    {
         _invulnerable = false;
     }
-    public void OnDeath() {
+    public void OnDeath()
+    {
         Console.WriteLine("OnDeath");
         _alive = false;
         Console.WriteLine("Change state to dying");
     }
-    public void Respawn() {
+    public void Respawn()
+    {
         _stateMachine.ChangeState("respawning");
     }
-    public void OnRespawn() {
+    public void OnRespawn()
+    {
         _alive = true;
         _stateMachine.ChangeState("idle");
     }
-    public void DamageTimerAlarm() {
+    public void DamageTimerAlarm()
+    {
         Console.WriteLine("Damage timer alarm");
         _stateMachine.ChangeState("idle");
     }

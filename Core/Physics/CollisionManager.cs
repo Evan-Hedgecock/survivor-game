@@ -30,10 +30,13 @@ public class CollisionManager(List<GameObject> staticObjects, List<GameObject> d
                                                           (CollisionGrid.Width / cellSize)
                                                         ];
 
-    public void Initialize() {
+    public void Initialize()
+    {
         // Create empty arrays in every index of Static and Dynamic grid objects
-        for (int row = 0; row < StaticGridObjects.GetLength(0); row++) {
-            for (int col = 0; col < StaticGridObjects.GetLength(1); col++) {
+        for (int row = 0; row < StaticGridObjects.GetLength(0); row++)
+        {
+            for (int col = 0; col < StaticGridObjects.GetLength(1); col++)
+            {
                 StaticGridObjects[row, col] = [];
                 DynamicGridObjects[row, col] = [];
             }
@@ -43,80 +46,100 @@ public class CollisionManager(List<GameObject> staticObjects, List<GameObject> d
         CreateObjectsList(StaticGridObjects, StaticObjects);
     }
 
-    public void Update() {
+    public void Update()
+    {
         UpdateDynamicObjects();
     }
 
-    private static void CreateObjectsList(List<GameObject>[,] list, List<GameObject> objects) {
-        foreach (GameObject obj in objects) {
+    private static void CreateObjectsList(List<GameObject>[,] list, List<GameObject> objects)
+    {
+        foreach (GameObject obj in objects)
+        {
             Node[] nodes = CollisionGrid.WorldRectToNodes(obj.Bounds);
-            foreach (Node node in nodes) {
+            foreach (Node node in nodes)
+            {
                 list[node.Row, node.Col].Add(obj);
             }
         }
     }
 
-    private void ClearDynamicObjects() {
-        foreach (List<GameObject> list in DynamicGridObjects) {
+    private void ClearDynamicObjects()
+    {
+        foreach (List<GameObject> list in DynamicGridObjects)
+        {
             list.Clear();
         }
     }
 
-    private void UpdateDynamicObjects() {
+    private void UpdateDynamicObjects()
+    {
         ClearDynamicObjects();
         CreateObjectsList(DynamicGridObjects, DynamicObjects);
     }
 
-    public bool IsColliding(PhysicsObject collider) {
+    public bool IsColliding(PhysicsObject collider)
+    {
         // Find which node[s] the collider is in
         Node[] colliderInNodes = CollisionGrid.WorldRectToNodes(collider.CollisionBox);
         // For every node the collider is in
         // Check if there is a collision with any objects in static or dynamic list
-        foreach (Node node in colliderInNodes) {
+        foreach (Node node in colliderInNodes)
+        {
             if (CheckObjectListCollisions(StaticGridObjects, node, collider) ||
-                CheckObjectListCollisions(DynamicGridObjects, node, collider)) {
+                CheckObjectListCollisions(DynamicGridObjects, node, collider))
+            {
                 return true;
             }
         }
         return false;
     }
-    public List<CollisionObject> GetCollision(PhysicsObject collider) {
+    public List<CollisionObject> GetCollision(PhysicsObject collider)
+    {
         // Find which nodes the collider is in
         Node[] colliderInNodes = CollisionGrid.WorldRectToNodes(collider.CollisionBox);
         List<CollisionObject> collisionList = [];
         List<GameObject> collided = [];
-        foreach (Node node in colliderInNodes) {
-            GetCollisionFromList(DynamicGridObjects, node, collider,  collisionList, collided);
-            GetCollisionFromList(StaticGridObjects, node, collider,  collisionList, collided);
+        foreach (Node node in colliderInNodes)
+        {
+            GetCollisionFromList(DynamicGridObjects, node, collider, collisionList, collided);
+            GetCollisionFromList(StaticGridObjects, node, collider, collisionList, collided);
         }
         return collisionList;
     }
     private static void GetCollisionFromList(List<GameObject>[,] list, Node node,
                                              PhysicsObject collider,
                                              List<CollisionObject> collisionList,
-                                             List<GameObject> collided) {
+                                             List<GameObject> collided)
+    {
         // if the list at node array is not empty
-        if (list[node.Row, node.Col].Count == 0) {
+        if (list[node.Row, node.Col].Count == 0)
+        {
             return;
-        } 
+        }
         // Then check if each object interects with the collider
-        foreach (GameObject obj in list[node.Row, node.Col]) {
+        foreach (GameObject obj in list[node.Row, node.Col])
+        {
             // If it does intersect, create a collisionObject corresponding to that collision
             // And add the object to a collided list to ensure no object is added twice
             if (obj.CollisionBox.Intersects(collider.CollisionBox) &&
-                obj != collider && !collided.Contains(obj)) {
+                obj != collider && !collided.Contains(obj))
+            {
                 collisionList.Add(new(collider, obj));
                 collided.Add(obj);
             }
         }
     }
-    private static bool CheckObjectListCollisions(List<GameObject>[,] objects, Node node, GameObject collider) {
-        if (objects[node.Row, node.Col].Count == 0) {
+    private static bool CheckObjectListCollisions(List<GameObject>[,] objects, Node node, GameObject collider)
+    {
+        if (objects[node.Row, node.Col].Count == 0)
+        {
             return false;
-        } 
+        }
         // Check if it's intersecting with an object in the corresponding CollisionGridObjects array
-        foreach (GameObject obj in objects[node.Row, node.Col]) {
-            if (obj.CollisionBox.Intersects(collider.CollisionBox) && obj != collider) {
+        foreach (GameObject obj in objects[node.Row, node.Col])
+        {
+            if (obj.CollisionBox.Intersects(collider.CollisionBox) && obj != collider)
+            {
                 return true;
             }
         }

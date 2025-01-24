@@ -5,7 +5,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Core.UI;
 
-public class HealthBar(int height, int width, Character owner) : ProgressBar(height, width) {
+public class HealthBar(int height, int width, Character owner) : ProgressBar(height, width)
+{
     protected Vector2 _offset = new(-1 * ((width / 2) - owner.Bounds.Width / 2), -2 - height);
     protected Character _owner = owner;
     protected float _percent = 1f;
@@ -27,7 +28,8 @@ public class HealthBar(int height, int width, Character owner) : ProgressBar(hei
         _foregroundArea = _area;
         _foregroundArea.Width = (int)(_area.Width * _percent);
     }
-    public void LoadTextures(Texture2D foregroundTexture, Texture2D backgroundTexture) {
+    public void LoadTextures(Texture2D foregroundTexture, Texture2D backgroundTexture)
+    {
         _foregroundTexture = foregroundTexture;
         _backgroundTexture = backgroundTexture;
     }

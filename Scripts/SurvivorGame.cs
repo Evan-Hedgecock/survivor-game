@@ -10,9 +10,10 @@ using Core;
 using System.Collections.Generic;
 
 namespace Scripts;
-public class SurvivorGame : Game {
-    private readonly GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
+public class SurvivorGame : Game
+{
+	private readonly GraphicsDeviceManager _graphics;
+	private SpriteBatch _spriteBatch;
 	private int _height;
 	private int _width;
 
@@ -25,15 +26,15 @@ public class SurvivorGame : Game {
 	private Pathfinder _pathfinder;
 
 	// Input properties
-    private Vector2 _inputAxis = new(0, 0);
+	private Vector2 _inputAxis = new(0, 0);
 
 	// Textures
 	private Texture2D _wallTexture;
-    private Texture2D _playerTexture;
+	private Texture2D _playerTexture;
 	private Texture2D _enemyTexture;
 
 	// Player properties
-    private Player _player;
+	private Player _player;
 
 	// Enemy properties
 	private Enemy _enemy;
@@ -54,18 +55,20 @@ public class SurvivorGame : Game {
 	private CollisionManager _collisionManager;
 	private DamageManager _damageManager;
 
-    public SurvivorGame() {
-        _graphics = new GraphicsDeviceManager(this);
+	public SurvivorGame()
+	{
+		_graphics = new GraphicsDeviceManager(this);
 		_camera = new Camera(new Vector2(0, 0));
-        Content.RootDirectory = "Content";
-        IsMouseVisible = true;
-    }
+		Content.RootDirectory = "Content";
+		IsMouseVisible = true;
+	}
 
-    protected override void Initialize() {
-        _graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width / 2;
+	protected override void Initialize()
+	{
+		_graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width / 2;
 		_graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height / 2;
-        _graphics.IsFullScreen = false;
-        _graphics.ApplyChanges();
+		_graphics.IsFullScreen = false;
+		_graphics.ApplyChanges();
 
 
 		// Initialize game grid
@@ -78,15 +81,17 @@ public class SurvivorGame : Game {
 
 		// Create characters
 		_player = new(new Rectangle(100, -50, 20, 40));
-		_enemy = new (new Rectangle(0, -100, 15, 30), _gameGrid);
+		_enemy = new(new Rectangle(0, -100, 15, 30), _gameGrid);
 
 		List<GameObject> dynamicObjects = [_enemy, _player];
 		List<GameObject> staticObjects = [.. _walls];
 		List<Character> characterList = [_enemy, _player];
 
-		foreach (GameObject obj in staticObjects) {
+		foreach (GameObject obj in staticObjects)
+		{
 			Node[] nodes = _gameGrid.WorldRectToNodes(obj.CollisionBox);
-			foreach (Node node in nodes) {
+			foreach (Node node in nodes)
+			{
 				node.Blocked = true;
 			}
 		}
@@ -110,18 +115,20 @@ public class SurvivorGame : Game {
 		_player.Initialize();
 		_enemy.Initialize();
 
-        base.Initialize();
-    }
+		base.Initialize();
+	}
 
-    protected override void LoadContent() {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
+	protected override void LoadContent()
+	{
+		_spriteBatch = new SpriteBatch(GraphicsDevice);
 
 		// Load Textures
-        _playerTexture = Content.Load<Texture2D>("player");
+		_playerTexture = Content.Load<Texture2D>("player");
 		_wallTexture = Content.Load<Texture2D>("rectangle");
 		_enemyTexture = Content.Load<Texture2D>("player");
 
-		foreach (Node node in _nodeGrid) {
+		foreach (Node node in _nodeGrid)
+		{
 			node.Texture = _playerTexture;
 		}
 
@@ -133,12 +140,14 @@ public class SurvivorGame : Game {
 		_wall2.Texture = _wallTexture;
 		_wall3.Texture = _wallTexture;
 		_wall4.Texture = _wallTexture;
-    }
+	}
 
-    protected override void Update(GameTime gameTime) {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-			Keyboard.GetState().IsKeyDown(Keys.Escape)) {
-            Exit();
+	protected override void Update(GameTime gameTime)
+	{
+		if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+			Keyboard.GetState().IsKeyDown(Keys.Escape))
+		{
+			Exit();
 		}
 		// Update timerManager timers
 		//_timerManager.Update(gameTime);
@@ -148,7 +157,7 @@ public class SurvivorGame : Game {
 		//DashInput();
 
 		// Update characters
-        _player.Update(_inputAxis, gameTime);
+		_player.Update(_inputAxis, gameTime);
 		_enemy.Update(_player, gameTime);
 		_collisionManager.Update();
 		_damageManager.Update();
@@ -159,73 +168,87 @@ public class SurvivorGame : Game {
 														  _player.CollisionBoxY));
 		List<Vector2> path = _pathfinder.FindPath(start, target);
 		pathNodes = [];
-		foreach (Vector2 waypoint in path) {
+		foreach (Vector2 waypoint in path)
+		{
 			pathNodes.Add(_gameGrid.WorldPosToNode(waypoint));
 		}
 
 		// Update Systems
 		_camera.Update(new Vector2(_player.PositionX, _player.PositionY), GraphicsDevice);
 
-        base.Update(gameTime);
-    }
+		base.Update(gameTime);
+	}
 
-    protected override void Draw(GameTime gameTime) {
-        //DisplayFrames(gameTime);
-        GraphicsDevice.Clear(Color.CornflowerBlue);
-        _spriteBatch.Begin(transformMatrix: _camera.CreateMatrix(GraphicsDevice));
-		foreach (Node node in _nodeGrid) {
-			if (pathNodes.Contains(node)) {
+	protected override void Draw(GameTime gameTime)
+	{
+		//DisplayFrames(gameTime);
+		GraphicsDevice.Clear(Color.CornflowerBlue);
+		_spriteBatch.Begin(transformMatrix: _camera.CreateMatrix(GraphicsDevice));
+		foreach (Node node in _nodeGrid)
+		{
+			if (pathNodes.Contains(node))
+			{
 				node.Draw(_spriteBatch, Color.Green);
-			} else {
+			}
+			else
+			{
 				node.Draw(_spriteBatch);
 			}
 		}
-        DrawWalls(_spriteBatch);
-        _player.Draw(_spriteBatch);
+		DrawWalls(_spriteBatch);
+		_player.Draw(_spriteBatch);
 		_enemy.Draw(_spriteBatch, Color.Red);
-        _spriteBatch.End();
-        base.Draw(gameTime);
-    }
-
-    private static void DisplayFrames(GameTime gameTime) {
-        float frameRate = 1 / (float)gameTime.ElapsedGameTime.TotalSeconds;
-        Console.Write("Frames: ");
-        Console.WriteLine(frameRate);
-    }
-
-	private void MoveInput() {
-		bool up = Keyboard.GetState().IsKeyDown(Keys.W);
-        bool down = Keyboard.GetState().IsKeyDown(Keys.S);
-        bool left = Keyboard.GetState().IsKeyDown(Keys.A);
-        bool right = Keyboard.GetState().IsKeyDown(Keys.D);
-
-        if ((up || down) && !(up && down)) {
-            _inputAxis.Y = Keyboard.GetState().IsKeyDown(Keys.S) ? 1 : -1;
-        }
-        else {
-            _inputAxis.Y = 0;
-        }
-
-        if ((left || right) && !(left && right)) {
-            _inputAxis.X = Keyboard.GetState().IsKeyDown(Keys.A) ? -1 : 1;
-        }
-        else {
-            _inputAxis.X = 0;
-        }
+		_spriteBatch.End();
+		base.Draw(gameTime);
 	}
 
-//	private void DashInput() {
-//        if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
-//			if (_player.GetDash()) {
-//				_player.Dash(_walls);
-//				_dashCooldownTimer.Start();
-//				_dashDurationTimer.Start();
-//			}
-//		}
-//	}
+	private static void DisplayFrames(GameTime gameTime)
+	{
+		float frameRate = 1 / (float)gameTime.ElapsedGameTime.TotalSeconds;
+		Console.Write("Frames: ");
+		Console.WriteLine(frameRate);
+	}
 
-	private static void DrawWalls(SpriteBatch spriteBatch) {
-		foreach (StaticObject wall in _walls) {
+	private void MoveInput()
+	{
+		bool up = Keyboard.GetState().IsKeyDown(Keys.W);
+		bool down = Keyboard.GetState().IsKeyDown(Keys.S);
+		bool left = Keyboard.GetState().IsKeyDown(Keys.A);
+		bool right = Keyboard.GetState().IsKeyDown(Keys.D);
+
+		if ((up || down) && !(up && down))
+		{
+			_inputAxis.Y = Keyboard.GetState().IsKeyDown(Keys.S) ? 1 : -1;
+		}
+		else
+		{
+			_inputAxis.Y = 0;
+		}
+
+		if ((left || right) && !(left && right))
+		{
+			_inputAxis.X = Keyboard.GetState().IsKeyDown(Keys.A) ? -1 : 1;
+		}
+		else
+		{
+			_inputAxis.X = 0;
+		}
+	}
+
+	//	private void DashInput() {
+	//        if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
+	//			if (_player.GetDash()) {
+	//				_player.Dash(_walls);
+	//				_dashCooldownTimer.Start();
+	//				_dashDurationTimer.Start();
+	//			}
+	//		}
+	//	}
+
+	private static void DrawWalls(SpriteBatch spriteBatch)
+	{
+		foreach (StaticObject wall in _walls)
+		{
 			wall.Draw(spriteBatch);
 		}
 	}

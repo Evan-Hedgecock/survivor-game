@@ -9,23 +9,28 @@ public class Timer(double time, Action callback)
 	private bool _isActive;
 	private readonly Action _timeout = callback;
 
-    public void CountDown(GameTime gameTime) {
-		if (_time <= 0) {
+	public void CountDown(GameTime gameTime)
+	{
+		if (_time <= 0)
+		{
 			_timeout();
 			Reset();
 		}
 		_time -= gameTime.ElapsedGameTime.TotalSeconds;
 	}
 
-	public void Start() {
+	public void Start()
+	{
 		_isActive = true;
 	}
 
-	public bool IsActive() {
+	public bool IsActive()
+	{
 		return _isActive;
 	}
 
-	private void Reset() {
+	private void Reset()
+	{
 		_time = _duration;
 		_isActive = false;
 	}

@@ -7,7 +7,8 @@ public class Damaged<T>(string name, Character owner) : State<Character>(name, o
 {
     public override void Enter()
     {
-        if (_owner.Health > 0) {
+        if (_owner.Health > 0)
+        {
             _owner.OnDamage();
         }
     }
