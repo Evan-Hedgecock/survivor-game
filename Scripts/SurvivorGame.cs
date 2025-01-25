@@ -239,7 +239,8 @@ public class SurvivorGame : Game
 	}
 
 	private void AttackInput() {
-		if (Mouse.GetState().LeftButton == ButtonState.Pressed) {
+		if (Mouse.GetState().LeftButton == ButtonState.Pressed ||
+			Keyboard.GetState().IsKeyDown(Keys.Space)) {
 			_player.StartAttack();
 		}
 	}

@@ -34,7 +34,7 @@ public class Enemy(Rectangle bounds, Grid grid) : Character(bounds)
         MaxHealth = 100;
         Health = MaxHealth;
         Damage = 10;
-        HealthBar = new(3, 20, this);
+        HealthBar = new(5, 30, this);
 
         // Services
         _pathfinder = Global.Services.GetService(typeof(Pathfinder)) as Pathfinder;

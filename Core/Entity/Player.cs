@@ -13,7 +13,7 @@ public class Player(Rectangle bounds) : Character(bounds)
         {
             HitboxX = (int)(Bounds.X + (Bounds.Width * FacingDirection.X));
             HitboxY = (int)(CollisionBox.Y + (CollisionBox.Height * FacingDirection.Y));
-            return new Rectangle(HitboxX, HitboxY, CollisionBox.Width, CollisionBox.Height);
+            return new Rectangle(HitboxX, HitboxY, CollisionBox.Width * 4, CollisionBox.Height * 2);
             // return Hitbox;
         }
     }
