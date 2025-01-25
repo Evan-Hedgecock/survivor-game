@@ -2,6 +2,8 @@ using System;
 using Microsoft.Xna.Framework;
 using Core.Systems;
 using Core.Systems.States;
+using System.Collections.Generic;
+using Core.Items;
 
 namespace Core.Entity;
 
@@ -44,6 +46,8 @@ public class Player(Rectangle bounds) : Character(bounds)
         Health = MaxHealth;
         Damage = 50;
 
+        Weapons[0].Equip();
+
         HealthBar = new(5, 50, this);
 
         // Services
@@ -69,6 +73,12 @@ public class Player(Rectangle bounds) : Character(bounds)
 
     public void Update(Vector2 inputAxis, GameTime gameTime)
     {
+        Console.Write("Player WeaponPosition: ");
+        Console.WriteLine(WeaponPosition);
+        foreach (Weapon weapon in Weapons)
+        {
+            weapon.Update();
+        }
         string states = string.Format("_invulnerable: {0}\n_alive: {1}\n_canAttack: {2}\n",
                                        _invulnerable, _alive, _canAttack);
         // Console.WriteLine(states);
@@ -76,5 +86,9 @@ public class Player(Rectangle bounds) : Character(bounds)
         _stateMachine.Update(gameTime);
         _timerManager.Update(gameTime);
         HealthBar.Update();
+    }
+
+    public void AddWeapon(Weapon weapon) {
+        Weapons.Add(weapon);
     }
 }

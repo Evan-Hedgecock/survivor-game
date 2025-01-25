@@ -1,17 +1,18 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Core.Objects;
+using Core.Items;
 using Core.Systems;
 using Core.Systems.States;
 using System;
 using Core.UI;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections;
-using System.Linq.Expressions;
 
 namespace Core.Entity;
 
 public class Character(Rectangle bounds) : PhysicsObject(bounds)
 {
+    public List<Weapon> Weapons = [];
     public virtual Rectangle Hurtbox
     {
         get
@@ -69,6 +70,13 @@ public class Character(Rectangle bounds) : PhysicsObject(bounds)
     protected Timer _invulnerableCooldownTimer;
     protected Timer _attackCooldownTimer;
     public HealthBar HealthBar;
+    public virtual Vector2 WeaponPosition
+    {
+        get
+        {
+            return new(Bounds.X + Bounds.Width - (Bounds.Width / 4), Bounds.Y + (Bounds.Height / 2));
+        }
+    }
 
     public void TakeDamage(int amount)
     {
@@ -130,5 +138,9 @@ public class Character(Rectangle bounds) : PhysicsObject(bounds)
     {
         base.Draw(spriteBatch);
         HealthBar.Draw(spriteBatch);
+        foreach (Weapon weapon in Weapons)
+        {
+            weapon.Draw(spriteBatch);
+        }
     }
 }

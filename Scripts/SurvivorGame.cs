@@ -8,6 +8,7 @@ using Core.Systems;
 using Core.Physics;
 using Core;
 using System.Collections.Generic;
+using Core.Items;
 
 namespace Scripts;
 public class SurvivorGame : Game
@@ -32,9 +33,11 @@ public class SurvivorGame : Game
 	private Texture2D _wallTexture;
 	private Texture2D _playerTexture;
 	private Texture2D _enemyTexture;
+	private Texture2D _swordTexture;
 
 	// Player properties
 	private Player _player;
+	private Sword _playerSword;
 
 	// Enemy properties
 	private Enemy _enemy;
@@ -83,6 +86,9 @@ public class SurvivorGame : Game
 		_player = new(new Rectangle(100, -50, 20, 40));
 		_enemy = new(new Rectangle(0, -100, 15, 30), _gameGrid);
 
+		_playerSword = new(_player);
+		_player.AddWeapon(_playerSword);
+
 		List<GameObject> dynamicObjects = [_enemy, _player];
 		List<GameObject> staticObjects = [.. _walls];
 		List<Character> characterList = [_enemy, _player];
@@ -115,6 +121,8 @@ public class SurvivorGame : Game
 		_player.Initialize();
 		_enemy.Initialize();
 
+		_playerSword.Initialize();
+
 		base.Initialize();
 	}
 
@@ -126,6 +134,7 @@ public class SurvivorGame : Game
 		_playerTexture = Content.Load<Texture2D>("player");
 		_wallTexture = Content.Load<Texture2D>("rectangle");
 		_enemyTexture = Content.Load<Texture2D>("player");
+		_swordTexture = Content.Load<Texture2D>("sword");
 
 		foreach (Node node in _nodeGrid)
 		{
@@ -137,6 +146,7 @@ public class SurvivorGame : Game
 		_player.HealthBar.LoadTextures(_playerTexture, _playerTexture);
 		_enemy.Texture = _enemyTexture;
 		_enemy.HealthBar.LoadTextures(_playerTexture, _playerTexture);
+		_playerSword.Texture = _swordTexture;
 		_wall.Texture = _wallTexture;
 		_wall2.Texture = _wallTexture;
 		_wall3.Texture = _wallTexture;
