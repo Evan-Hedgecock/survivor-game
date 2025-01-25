@@ -136,6 +136,7 @@ public class SurvivorGame : Game
 		_player.Texture = _playerTexture;
 		_player.HealthBar.LoadTextures(_playerTexture, _playerTexture);
 		_enemy.Texture = _enemyTexture;
+		_enemy.HealthBar.LoadTextures(_playerTexture, _playerTexture);
 		_wall.Texture = _wallTexture;
 		_wall2.Texture = _wallTexture;
 		_wall3.Texture = _wallTexture;
@@ -154,6 +155,7 @@ public class SurvivorGame : Game
 
 		// Update input
 		MoveInput();
+		AttackInput();
 		//DashInput();
 
 		// Update characters
@@ -197,6 +199,7 @@ public class SurvivorGame : Game
 		}
 		DrawWalls(_spriteBatch);
 		_player.Draw(_spriteBatch);
+		_enemy.Draw(_spriteBatch);
 		_enemy.Draw(_spriteBatch, Color.Red);
 		_spriteBatch.End();
 		base.Draw(gameTime);
@@ -235,6 +238,11 @@ public class SurvivorGame : Game
 		}
 	}
 
+	private void AttackInput() {
+		if (Mouse.GetState().LeftButton == ButtonState.Pressed) {
+			_player.StartAttack();
+		}
+	}
 	//	private void DashInput() {
 	//        if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
 	//			if (_player.GetDash()) {

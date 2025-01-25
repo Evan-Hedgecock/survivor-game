@@ -11,6 +11,7 @@ public class Respawning<T>(string name, Character owner) : State<Character>(name
         // Play respawn animation
         // Start respawn timer
         // Call owner IsRespawning() for other functionality
+        Console.WriteLine("Entered Respawning state");
         _owner.Speed = _owner.MaxSpeed;
         _owner.Health = _owner.MaxHealth;
         _owner.BoundsX = 0;

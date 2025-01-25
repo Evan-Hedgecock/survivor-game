@@ -20,6 +20,5 @@ public class Damaged<T>(string name, Character owner) : State<Character>(name, o
 
     public override void Update(float deltaTime)
     {
-        Console.WriteLine("Updating damaged state");
     }
 }

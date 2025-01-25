@@ -29,7 +29,34 @@ public class Character(Rectangle bounds) : PhysicsObject(bounds)
                                  CollisionBox.Width,
                                  CollisionBox.Height + 2);
         }
+        set
+        {
+            _hitBox = value;
+        }
     }
+    public virtual int HitboxX
+    {
+        get
+        {
+            return _hitBox.X;
+        }
+        set
+        {
+            _hitBox.X = value;
+        }
+    }
+    public virtual int HitboxY
+    {
+        get
+        {
+            return _hitBox.Y;
+        }
+        set
+        {
+            _hitBox.Y = value;
+        }
+    }
+    private Rectangle _hitBox;
     public int Damage;
     public int Health;
     public int MaxHealth;
@@ -38,18 +65,18 @@ public class Character(Rectangle bounds) : PhysicsObject(bounds)
     protected StateMachine<Character> _stateMachine;
     protected bool _invulnerable;
     protected bool _alive = true;
-    protected Timer _invulnerableTimer;
+    protected bool _canAttack = true;
+    protected Timer _invulnerableCooldownTimer;
+    protected Timer _attackCooldownTimer;
     public HealthBar HealthBar;
 
     public void TakeDamage(int amount)
     {
         if (_invulnerable || !_alive)
         {
-            Console.WriteLine("Invulnerable baby!");
             return;
         }
         Health -= amount;
-        Console.WriteLine("About to change state to damaged");
         if (Health > 0)
         {
             _stateMachine.ChangeState("damaged");
@@ -58,11 +85,10 @@ public class Character(Rectangle bounds) : PhysicsObject(bounds)
         {
             _stateMachine.ChangeState("dying");
         }
-        Console.WriteLine("Successfully changed state");
     }
     public void OnDamage()
     {
-        _invulnerableTimer.Start();
+        _invulnerableCooldownTimer.Start();
         _invulnerable = true;
     }
     public void OnRecover()
@@ -71,9 +97,7 @@ public class Character(Rectangle bounds) : PhysicsObject(bounds)
     }
     public void OnDeath()
     {
-        Console.WriteLine("OnDeath");
         _alive = false;
-        Console.WriteLine("Change state to dying");
     }
     public void Respawn()
     {
@@ -84,12 +108,24 @@ public class Character(Rectangle bounds) : PhysicsObject(bounds)
         _alive = true;
         _stateMachine.ChangeState("idle");
     }
-    public void DamageTimerAlarm()
+    public void InvulnerableCooldownTimerAlarm()
     {
-        Console.WriteLine("Damage timer alarm");
         _stateMachine.ChangeState("idle");
     }
-
+    public void AttackCooldownTimerAlarm() {
+        _canAttack = true;
+        _stateMachine.ChangeState("idle");
+    }
+    public void StartAttack() {
+        _attackCooldownTimer.Start();
+        if (_canAttack) _stateMachine.ChangeState("attacking");
+    }
+    public void Attack() {
+        _canAttack = false;
+        string attackInfo = string.Format("Hitbox: {0}\nBounds: {1}\nCollisionBox: {2}",
+                                          Hitbox, Bounds, CollisionBox);
+        _damageManager.IsDamaging(this);
+    }
     public override void Draw(SpriteBatch spriteBatch)
     {
         base.Draw(spriteBatch);

@@ -85,7 +85,6 @@ public class DamageManager(List<Character> characters)
             if (character.Hurtbox.Intersects(attacker.Hitbox) && character != attacker)
             {
                 character.TakeDamage(attacker.Damage);
-                Console.WriteLine(character.Health);
                 return true;
             }
         }

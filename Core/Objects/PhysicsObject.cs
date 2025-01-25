@@ -35,6 +35,7 @@ public class PhysicsObject : GameObject
     public int Friction { get; set; }
     public int MaxSpeed { get; set; }
     public int Speed { get; set; }
+    public Vector2 FacingDirection { get; set; } = new Vector2(1, 0);
     protected CollisionManager _collisionManager;
 
     public PhysicsObject(Rectangle bounds) : base(bounds)
@@ -67,6 +68,9 @@ public class PhysicsObject : GameObject
 
     public void Move(Vector2 direction, GameTime gameTime)
     {
+        if (direction.X != 0 || direction.Y != 0) {
+            FacingDirection = direction;
+        }
         double deltaTime = gameTime.ElapsedGameTime.TotalSeconds;
         if (direction.X < 0)
         {

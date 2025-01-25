@@ -1,11 +1,13 @@
 using System;
+using Core.Entity;
 
 namespace Core.Systems.States;
 
-public class Idle<T>(string name, T owner) : State<T>(name, owner)
+public class Attacking<T>(string name, Character owner) : State<Character>(name, owner)
 {
     public override void Enter()
     {
+        _owner.Attack();
     }
 
     public override void Exit()

@@ -22,7 +22,6 @@ public class HealthBar(int height, int width, Character owner) : ProgressBar(hei
         _percent = (float)_owner.Health / _owner.MaxHealth;
         string healthDetails = string.Format("Health: {0}\nMaxHealth: {1}\nPercent: {2}\n",
                                              _owner.Health, _owner.MaxHealth, _percent);
-        Console.WriteLine(healthDetails);
         _area.X = (int)(_owner.BoundsX + _offset.X);
         _area.Y = (int)(_owner.BoundsY + _offset.Y);
         _foregroundArea = _area;
